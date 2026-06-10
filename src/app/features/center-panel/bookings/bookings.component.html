@@ -32,7 +32,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let b of filtered">
+          <tr *ngFor="let b of filtered" (click)="openBooking(b)" style="cursor:pointer;">
             <td><span class="booking-id">{{b.id}}</span></td>
             <td>
               <div class="d-flex align-items-center gap-2">
@@ -85,4 +85,88 @@
       </table>
     </div>
   </div>
+  <!-- ══ BOOKING MODAL ══ -->
+<div class="modal-backdrop-custom" *ngIf="selectedBooking" (click)="closeBooking()"></div>
+<div class="booking-modal animate-fadeInUp" *ngIf="selectedBooking">
+
+  <!-- Header -->
+  <div class="bm-header">
+    <div>
+      <div class="bm-tag">Booking Details</div>
+      <h4 class="bm-title">{{selectedBooking.trip}}</h4>
+      <div class="bm-sub">{{selectedBooking.id}} · {{selectedBooking.date}}</div>
+    </div>
+    <button class="bm-close" (click)="closeBooking()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Diver Info -->
+  <div class="bm-section">
+    <div class="bm-section-label">Diver</div>
+    <div class="d-flex align-items-center gap-3">
+      <div class="bm-avatar">{{selectedBooking.diver.charAt(0)}}</div>
+      <div>
+        <div class="bm-diver-name">{{selectedBooking.diver}}</div>
+        <div class="bm-diver-email">{{selectedBooking.email}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="bm-stats-row">
+    <div class="bm-stat">
+      <div class="bm-stat-val">{{selectedBooking.divers}}</div>
+      <div class="bm-stat-key">Divers</div>
+    </div>
+    <div class="bm-stat">
+      <div class="bm-stat-val">EGP {{selectedBooking.total | number}}</div>
+      <div class="bm-stat-key">Total</div>
+    </div>
+    <div class="bm-stat">
+      <span [class]="selectedBooking.status==='confirmed'?'badge-active':selectedBooking.status==='pending'?'badge-pending':'badge-blocked'">
+        {{selectedBooking.status}}
+      </span>
+      <div class="bm-stat-key mt-1">Status</div>
+    </div>
+    <div class="bm-stat">
+      <span [class]="selectedBooking.payment==='paid'?'badge-active':selectedBooking.payment==='deposit'?'badge-pending':'badge-blocked'">
+        {{selectedBooking.payment}}
+      </span>
+      <div class="bm-stat-key mt-1">Payment</div>
+    </div>
+  </div>
+
+  <!-- Payment Breakdown -->
+  <div class="bm-section">
+    <div class="bm-section-label">Payment Breakdown</div>
+    <div class="bm-payment-row">
+      <span>Trip Price</span>
+      <span>EGP {{selectedBooking.total | number}}</span>
+    </div>
+    <div class="bm-payment-row">
+      <span>Divers × {{selectedBooking.divers}}</span>
+      <span>EGP {{(selectedBooking.total / selectedBooking.divers) | number}} each</span>
+    </div>
+    <div class="bm-payment-row bm-payment-total">
+      <span>Total Paid</span>
+      <span>EGP {{selectedBooking.payment==='paid' ? (selectedBooking.total | number) : selectedBooking.payment==='deposit' ? (selectedBooking.total * 0.3 | number) : '0'}}</span>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="d-flex gap-2 flex-wrap" *ngIf="selectedBooking.status==='pending'">
+    <button (click)="update(selectedBooking.id,'confirmed')"
+      class="btn-primary-gradient d-flex align-items-center gap-2 px-4 py-2">
+      <span class="material-symbols-outlined" style="font-size:1rem;">check_circle</span>
+      Approve Booking
+    </button>
+    <button (click)="update(selectedBooking.id,'cancelled')"
+      class="bm-cancel-btn d-flex align-items-center gap-2 px-4 py-2">
+      <span class="material-symbols-outlined" style="font-size:1rem;">cancel</span>
+      Cancel Booking
+    </button>
+  </div>
+
+</div>
 </div>

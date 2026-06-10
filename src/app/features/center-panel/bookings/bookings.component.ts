@@ -30,5 +30,14 @@ export class CenterBookingsComponent {
 
   get totalRevenue() { return this.bookings.filter(b => b.status !== 'cancelled').reduce((s, b) => s + b.total, 0); }
   countByStatus(s: string) { return s === 'all' ? this.bookings.length : this.bookings.filter(b => b.status === s).length; }
-  update(id: string, status: string) { const b = this.bookings.find(b => b.id === id); if (b) b.status = status; }
+  update(id: string, status: string) {
+  const b = this.bookings.find(b => b.id === id);
+  if (b) { b.status = status; }
+  if (this.selectedBooking?.id === id) this.selectedBooking.status = status;
+}
+
+
+  selectedBooking: any = null;
+  openBooking(b: any) { this.selectedBooking = b; }
+  closeBooking() { this.selectedBooking = null; }
 }

@@ -101,6 +101,39 @@
         <div class="col-12">
           <label class="form-label field-label">Duration</label>
           <input formControlName="duration" type="text" placeholder="3 hrs" class="form-control-tonal w-100">
+          <!-- Main Photo -->
+<div class="col-12">
+  <label class="form-label field-label">Main Photo</label>
+  <div class="photo-upload-box" (click)="mainPhotoInput.click()">
+    <img *ngIf="mainPhotoPreview" [src]="mainPhotoPreview" class="photo-preview-img">
+    <div *ngIf="!mainPhotoPreview" class="photo-upload-placeholder">
+      <span class="material-symbols-outlined photo-upload-icon">add_photo_alternate</span>
+      <span class="photo-upload-text">Click to upload main photo</span>
+    </div>
+    <input #mainPhotoInput type="file" accept="image/*" class="d-none" (change)="onMainPhoto($event)">
+  </div>
+</div>
+
+<!-- Additional Photos -->
+<div class="col-12">
+  <label class="form-label field-label d-flex align-items-center justify-content-between">
+    <span>Additional Photos</span>
+    <span class="photos-count-badge">{{additionalPhotos.length}}/10</span>
+  </label>
+  <div class="additional-photos-grid">
+    <div *ngFor="let p of additionalPhotos; let i = index" class="additional-photo-item">
+      <img [src]="p" class="additional-photo-img">
+      <button (click)="removeAdditionalPhoto(i)" class="additional-photo-remove" type="button">
+        <span class="material-symbols-outlined" style="font-size:.85rem;">close</span>
+      </button>
+    </div>
+    <div *ngIf="additionalPhotos.length < 10" class="additional-photo-add" (click)="addMoreInput.click()">
+      <span class="material-symbols-outlined" style="font-size:1.5rem; color:var(--outline);">add</span>
+      <input #addMoreInput type="file" accept="image/*" multiple class="d-none" (change)="onAdditionalPhotos($event)">
+    </div>
+  </div>
+  <p class="photos-hint">Max 10 additional photos</p>
+</div>
         </div>
       </div>
       <div class="d-flex gap-3 mt-4">

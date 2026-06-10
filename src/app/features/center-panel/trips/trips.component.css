@@ -28,3 +28,48 @@
 .modal-card    { width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
 .modal-title   { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin:0; }
 .field-label   { font-size:.83rem; font-weight:600; color:var(--on-surface); }
+
+
+
+/* ── Photos ── */
+.photo-upload-box {
+  border: 2px dashed var(--outline-variant);
+  border-radius: 1rem; height: 160px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; overflow: hidden; transition: border-color .2s;
+}
+.photo-upload-box:hover { border-color: var(--primary); }
+.photo-preview-img { width:100%; height:100%; object-fit:cover; }
+.photo-upload-placeholder { display:flex; flex-direction:column; align-items:center; gap:.5rem; }
+.photo-upload-icon { font-size:2.5rem; color:var(--outline); }
+.photo-upload-text { font-size:.8rem; color:var(--outline); }
+
+.additional-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .5rem;
+}
+.additional-photo-item { position:relative; aspect-ratio:1; border-radius:.75rem; overflow:hidden; }
+.additional-photo-img  { width:100%; height:100%; object-fit:cover; }
+.additional-photo-remove {
+  position:absolute; top:4px; right:4px;
+  background:rgba(0,0,0,.6); color:#fff;
+  border:none; border-radius:50%;
+  width:20px; height:20px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; padding:0;
+}
+.additional-photo-add {
+  aspect-ratio:1; border-radius:.75rem;
+  border:2px dashed var(--outline-variant);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:border-color .2s;
+}
+.additional-photo-add:hover { border-color:var(--primary); }
+.photos-count-badge {
+  font-size:.72rem; font-weight:700;
+  background:var(--surface-container);
+  color:var(--on-surface-variant);
+  padding:2px 8px; border-radius:9999px;
+}
+.photos-hint { font-size:.72rem; color:var(--outline); margin-top:.4rem; margin-bottom:0; }
