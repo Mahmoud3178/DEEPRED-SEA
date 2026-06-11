@@ -1,4 +1,3 @@
-
 /* ── Page ── */
 .booking-page { background:var(--surface-container-low); min-height:100vh; padding:3rem 0; }
 
@@ -9,43 +8,105 @@
 .step-circle-pending { background:var(--surface-container-high); color:var(--on-surface-variant); }
 .step-label          { font-size:.75rem; font-weight:700; color:var(--on-surface-variant); }
 .step-connector      { flex:1; max-width:80px; height:2px; transition:all .3s; }
-.step-connector-done { background:var(--primary); }
+.step-connector-done    { background:var(--primary); }
 .step-connector-pending { background:var(--surface-container-high); }
 
 /* ── Section headings ── */
-.form-section-title  { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.5rem; }
-.form-section-desc   { color:var(--on-surface-variant); margin-bottom:2rem; font-size:.9rem; }
-.field-label         { font-size:.82rem; font-weight:600; color:var(--on-surface); }
+.form-section-title { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.5rem; }
+.form-section-desc  { color:var(--on-surface-variant); margin-bottom:2rem; font-size:.9rem; }
+.field-label        { font-size:.82rem; font-weight:600; color:var(--on-surface); }
+.field-error        { color:var(--error); font-size:.78rem; display:flex; align-items:center; gap:.3rem; }
 
 /* ── Payment option cards ── */
 .payment-option { transition:all .25s; cursor:pointer; }
 .payment-option-active   { background:rgba(0,93,144,.06); border:2px solid var(--primary); }
 .payment-option-inactive { background:var(--surface-container-low); border:2px solid transparent; }
-
 .pay-icon-wrap { width:44px; height:44px; flex-shrink:0; }
 .pay-icon-wrap-active   { background:linear-gradient(135deg,#005d90,#0077b6); }
 .pay-icon-wrap-inactive { background:var(--surface-container); }
 .pay-label { font-weight:700; color:var(--on-surface); font-size:.9rem; }
 .pay-desc  { font-size:.78rem; color:var(--on-surface-variant); }
-
 .radio-dot { width:20px; height:20px; border:2px solid; transition:all .25s; }
 .radio-dot-active   { border-color:var(--primary); background:var(--primary); }
 .radio-dot-inactive { border-color:var(--outline-variant); background:transparent; }
 
-/* ── Wallet info box ── */
-.wallet-info { background:var(--surface-container-low); }
-.wallet-info-icon { color:var(--primary); }
-.wallet-info-title{ font-weight:700; color:var(--on-surface); font-size:.9rem; }
-.wallet-info-desc { color:var(--on-surface-variant); font-size:.85rem; margin:0; }
-.wallet-amount    { color:var(--primary); }
+/* ── Wallet info ── */
+.wallet-info { background:var(--surface-container-low); border:1px solid var(--surface-container-high); }
+.wallet-info-icon  { color:var(--primary); }
+.wallet-info-title { font-weight:700; color:var(--on-surface); font-size:.9rem; }
+.wallet-steps { display:flex; flex-direction:column; gap:.6rem; margin-top:.5rem; }
+.wallet-step  { display:flex; align-items:flex-start; gap:.75rem; font-size:.85rem; color:var(--on-surface-variant); }
+.wallet-step-num {
+  min-width:22px; height:22px; border-radius:50%;
+  background:linear-gradient(135deg,#005d90,#0077b6);
+  color:#fff; font-size:.72rem; font-weight:700;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.wallet-amount { color:var(--primary); }
+
+/* ── Upload zone ── */
+.upload-zone {
+  border: 2px dashed var(--outline-variant);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-container-low);
+}
+.upload-zone:hover { border-color:var(--primary); background:rgba(0,93,144,.04); }
+.upload-zone-filled { border-style: solid; border-color:var(--primary); padding:0; }
+.upload-icon  { font-size:2.5rem; color:var(--outline); margin-bottom:.5rem; }
+.upload-title { font-weight:700; color:var(--on-surface); margin-bottom:.25rem; font-size:.95rem; }
+.upload-hint  { font-size:.78rem; color:var(--on-surface-variant); margin:0; }
+
+.receipt-preview-img {
+  width:100%; max-height:220px;
+  object-fit:cover; display:block;
+}
+.receipt-overlay {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,.45);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  color:#fff; gap:.3rem; font-size:.85rem; font-weight:600;
+  opacity:0; transition:opacity .2s;
+}
+.upload-zone-filled:hover .receipt-overlay { opacity:1; }
+.receipt-overlay .material-symbols-outlined { font-size:1.5rem; }
+
+.receipt-filename {
+  font-size:.8rem; color:var(--on-surface-variant);
+  background:var(--surface-container); border-radius:.5rem; padding:.4rem .75rem;
+}
+
+/* ── Step 3 receipt ── */
+.step3-receipt-wrap {
+  position:relative; border-radius:1rem; overflow:hidden;
+  border:2px solid var(--surface-container-high);
+  max-height:200px;
+}
+.step3-receipt-img { width:100%; max-height:200px; object-fit:cover; display:block; }
+.step3-receipt-badge {
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  background:rgba(0,0,0,.65); color:#fff; border-radius:9999px;
+  padding:.3rem .9rem; font-size:.75rem; font-weight:700;
+  display:flex; align-items:center; gap:.3rem; white-space:nowrap;
+}
+.receipt-note {
+  display:flex; align-items:flex-start; gap:.4rem;
+  font-size:.78rem; color:var(--on-surface-variant); line-height:1.5;
+}
 
 /* ── Confirm review ── */
 .review-row { border-bottom:1px solid var(--surface-container-high); }
-.review-row-label{ color:var(--on-surface-variant); font-size:.875rem; }
-.review-row-value{ font-weight:700; color:var(--on-surface); }
+.review-row-label { color:var(--on-surface-variant); font-size:.875rem; }
+.review-row-value { font-weight:700; color:var(--on-surface); }
 .review-total { background:rgba(0,93,144,.06); }
-.review-total-label{ font-weight:700; color:var(--on-surface); }
-.review-total-val  { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.25rem; font-weight:800; color:var(--primary); }
+.review-total-label { font-weight:700; color:var(--on-surface); }
+.review-total-val { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.25rem; font-weight:800; color:var(--primary); }
 
 /* ── Summary sidebar ── */
 .summary-sidebar  { position:sticky; top:100px; }
@@ -56,10 +117,8 @@
 .summary-trip-name{ font-weight:600; color:var(--on-surface); }
 .summary-trip-meta{ font-size:.82rem; color:var(--on-surface-variant); margin-top:.25rem; }
 .summary-divider  { border-top:1px solid var(--surface-container-high); }
-
-.divers-btn { width:32px; height:32px; background:var(--surface-container); cursor:pointer; }
+.divers-btn   { width:32px; height:32px; background:var(--surface-container); cursor:pointer; }
 .divers-count { font-weight:700; min-width:20px; text-align:center; }
-
 .price-row-label { color:var(--on-surface-variant); font-size:.875rem; }
 .price-row-val   { font-weight:600; }
 .deposit-label   { color:var(--on-surface-variant); font-size:.875rem; }
@@ -67,13 +126,19 @@
 .total-label     { font-weight:700; color:var(--on-surface); }
 .total-val       { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.25rem; font-weight:800; color:var(--primary); }
 .total-divider   { border-top:1px solid var(--surface-container-high); }
-
 .cancellation-box  { background:rgba(0,103,125,.06); }
 .cancellation-icon { color:var(--secondary); font-size:1rem; }
 .cancellation-text { font-size:.78rem; color:var(--on-surface-variant); }
 
 /* ── Confirmation screen ── */
-.confirm-circle  { width:96px; height:96px; background:linear-gradient(135deg,#005d90,#0077b6); }
-.confirm-icon    { font-size:3rem; font-variation-settings:'FILL' 1; }
-.confirm-title   { font-family:'Plus Jakarta Sans',sans-serif; font-size:2rem; font-weight:800; color:var(--on-surface); margin-bottom:.5rem; }
-.confirm-desc    { color:var(--on-surface-variant); max-width:450px; margin:0 auto 2rem; line-height:1.7; }
+.confirm-circle { width:96px; height:96px; background:linear-gradient(135deg,#005d90,#0077b6); }
+.confirm-icon   { font-size:3rem; font-variation-settings:'FILL' 1; }
+.confirm-title  { font-family:'Plus Jakarta Sans',sans-serif; font-size:2rem; font-weight:800; color:var(--on-surface); margin-bottom:.5rem; }
+.confirm-desc   { color:var(--on-surface-variant); max-width:450px; margin:0 auto 1.5rem; line-height:1.7; }
+.confirm-pending-badge {
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:rgba(180,120,0,.1); color:#a07000;
+  border:1px solid rgba(180,120,0,.25);
+  border-radius:9999px; padding:.5rem 1.25rem;
+  font-weight:700; font-size:.85rem;
+}

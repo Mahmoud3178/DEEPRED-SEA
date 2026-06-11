@@ -1,9 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
-@Component({ selector: 'app-center-trips', templateUrl: './trips.component.html',
-  styleUrls: ['./trips.component.css'] })
-export class CenterTripsComponent {
+@Component({
+  selector: 'app-center-trips',
+  templateUrl: './trips.component.html',
+  styleUrls: ['./trips.component.css']
+})
+export class CenterTripsComponent implements OnInit {
   showModal = false;
   editTrip: any = null;
   tripForm: FormGroup;
@@ -19,15 +23,22 @@ export class CenterTripsComponent {
     { id: 'T5', name: 'Advanced Nitrox', type: 'Course', price: 1900, capacity: 6, booked: 2, status: 'active', depth: '40m', duration: '2 days', mainPhoto: null, photos: [] },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute) {
     this.tripForm = this.fb.group({
-      name: ['', Validators.required],
-      type: ['Day Trip', Validators.required],
-      price: ['', [Validators.required, Validators.min(1)]],
+      name:     ['', Validators.required],
+      type:     ['Day Trip', Validators.required],
+      price:    ['', [Validators.required, Validators.min(1)]],
       capacity: ['', [Validators.required, Validators.min(1)]],
-      depth: ['', Validators.required],
+      depth:    ['', Validators.required],
       duration: ['', Validators.required],
     });
+  }
+
+  ngOnInit() {
+    // لو جاي من الـ dashboard بـ ?action=add افتح الـ modal مباشرة
+    if (this.route.snapshot.queryParams['action'] === 'add') {
+      this.openAdd();
+    }
   }
 
   openAdd() {

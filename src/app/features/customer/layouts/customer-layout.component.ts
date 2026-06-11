@@ -13,7 +13,6 @@ export class CustomerLayoutComponent {
   navLinks = [
     { label: 'Destinations', route: '/home', icon: 'explore', exact: true },
     { label: 'All Centers', route: '/home/centers', icon: 'storefront', exact: false },
-    { label: 'Liveaboards', route: '/home/liveaboards', icon: 'sailing', exact: false },
     { label: 'About', route: '/home/about', icon: 'info', exact: true },
     { label: 'Contact', route: '/home/contact', icon: 'phone', exact: true },
   ];
