@@ -7,8 +7,7 @@
 
     <div class="position-relative z-1">
       <div class="d-flex align-items-center gap-2 mb-2">
-        <span class="material-symbols-outlined brand-icon">scuba_diving</span>
-        <span class="fw-bold brand-name">DEEPRED SEA</span>
+        <img src="assets/images/hero.png" alt="DiveKemet" class="login-brand-logo">
       </div>
       <p class="brand-tagline">EGYPT'S PREMIER DIVE PLATFORM</p>
     </div>
@@ -28,7 +27,7 @@
       </div>
     </div>
 
-    <p class="brand-copy position-relative z-1">© 2025 DeepRed Sea — All rights reserved</p>
+    <p class="brand-copy position-relative z-1">© 2025 DiveKemet — All rights reserved</p>
   </div>
 
   <!-- Right: Login Form -->
@@ -37,24 +36,11 @@
 
       <!-- Mobile logo -->
       <div class="d-flex d-lg-none align-items-center gap-2 mb-4">
-        <span class="material-symbols-outlined mobile-logo-icon">scuba_diving</span>
-        <span class="fw-bold mobile-logo-name">DEEPRED SEA</span>
+        <img src="assets/images/hero.png" alt="DiveKemet" class="login-brand-logo-mobile">
       </div>
 
       <h2 class="form-title">Welcome back</h2>
       <p class="form-subtitle">Sign in to continue your dive journey</p>
-
-      <!-- Role Selector -->
-      <div class="d-flex gap-2 mb-4">
-        <button *ngFor="let r of roles" type="button"
-          (click)="form.get('role')?.setValue(r.value)"
-          class="flex-fill py-2 px-3 rounded-3 d-flex align-items-center justify-content-center gap-1 border-0 role-btn"
-          [class.role-btn-active]="form.get('role')?.value === r.value"
-          [class.role-btn-inactive]="form.get('role')?.value !== r.value">
-          <span class="material-symbols-outlined" style="font-size:1rem;">{{r.icon}}</span>
-          {{r.label}}
-        </button>
-      </div>
 
       <form [formGroup]="form" (ngSubmit)="submit()">
         <!-- Email -->
@@ -99,6 +85,13 @@
           <span class="material-symbols-outlined submit-icon" *ngIf="!loading">login</span>
           {{ loading ? 'Signing in...' : 'Sign In' }}
         </button>
+
+   <div class="d-flex justify-content-end mb-3">
+          <a routerLink="/auth/forgot-password"
+             style="color:var(--primary);font-size:.83rem;font-weight:600;text-decoration:none;">
+            Forgot password?
+          </a>
+        </div>
 
         <p class="text-center mt-3 form-footer">
           Don't have an account?

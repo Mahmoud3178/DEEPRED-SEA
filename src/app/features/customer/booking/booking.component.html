@@ -107,44 +107,66 @@
               </div>
             </div>
 
-            <!-- Card fields -->
-            <div *ngIf="selectedPayment==='card'" class="animate-fadeInUp">
-              <form [formGroup]="paymentForm">
-                <div class="row g-3">
-                  <div class="col-12">
-                    <label class="form-label field-label">Card Number</label>
-                    <input formControlName="cardNumber" type="text" placeholder="1234 5678 9012 3456"
-                      class="form-control-tonal w-100">
+            <!-- Wallet info + Upload -->
+            <div *ngIf="selectedPayment==='wallet' || selectedPayment==='deposit'" class="animate-fadeInUp">
+
+              <!-- Instructions -->
+              <div class="p-4 rounded-3 wallet-info mb-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="material-symbols-outlined wallet-info-icon">account_balance_wallet</span>
+                  <span class="wallet-info-title">Payment Instructions</span>
+                </div>
+                <div class="wallet-steps">
+                  <div class="wallet-step">
+                    <span class="wallet-step-num">1</span>
+                    <span>Open <strong>Vodafone Cash</strong>, <strong>InstaPay</strong>, or any mobile wallet</span>
                   </div>
-                  <div class="col-6">
-                    <label class="form-label field-label">Expiry</label>
-                    <input formControlName="expiry" type="text" placeholder="MM/YY"
-                      class="form-control-tonal w-100">
+                  <div class="wallet-step">
+                    <span class="wallet-step-num">2</span>
+                    <span>Send <strong class="wallet-amount">EGP {{amountDue}}</strong> to <strong>01001234567</strong></span>
                   </div>
-                  <div class="col-6">
-                    <label class="form-label field-label">CVV</label>
-                    <input formControlName="cvv" type="text" placeholder="123"
-                      class="form-control-tonal w-100">
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label field-label">Name on Card</label>
-                    <input formControlName="cardName" type="text" placeholder="Ahmed Mohamed"
-                      class="form-control-tonal w-100">
+                  <div class="wallet-step">
+                    <span class="wallet-step-num">3</span>
+                    <span>Take a screenshot of the transaction and upload it below</span>
                   </div>
                 </div>
-              </form>
-            </div>
-
-            <!-- Wallet info -->
-            <div *ngIf="selectedPayment==='wallet'" class="animate-fadeInUp p-4 rounded-3 wallet-info">
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="material-symbols-outlined wallet-info-icon">info</span>
-                <span class="wallet-info-title">Payment Instructions</span>
               </div>
-              <p class="wallet-info-desc">
-                Send <strong class="wallet-amount">EGP {{amountDue}}</strong>
-                to <strong>0100 123 4567</strong> — then upload your receipt.
-              </p>
+
+              <!-- Upload receipt -->
+              <div class="upload-zone" [class.upload-zone-filled]="receiptPreview"
+                   (click)="receiptInput.click()"
+                   (dragover)="$event.preventDefault()"
+                   (drop)="onDrop($event)">
+                <input #receiptInput type="file" accept="image/*,application/pdf"
+                       class="d-none" (change)="onReceiptSelected($event)">
+
+                <ng-container *ngIf="!receiptPreview">
+                  <span class="material-symbols-outlined upload-icon">upload_file</span>
+                  <p class="upload-title">Upload Payment Receipt</p>
+                  <p class="upload-hint">Click or drag & drop — PNG, JPG, PDF</p>
+                </ng-container>
+
+                <ng-container *ngIf="receiptPreview">
+                  <img [src]="receiptPreview" alt="Receipt" class="receipt-preview-img">
+                  <div class="receipt-overlay">
+                    <span class="material-symbols-outlined">edit</span>
+                    <span>Change</span>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div *ngIf="receiptFile" class="d-flex align-items-center gap-2 mt-2 receipt-filename">
+                <span class="material-symbols-outlined" style="font-size:1rem;color:var(--primary)">attach_file</span>
+                <span>{{receiptFile.name}}</span>
+                <button class="ms-auto border-0 bg-transparent p-0" (click)="removeReceipt($event)">
+                  <span class="material-symbols-outlined" style="font-size:1rem;color:var(--error)">close</span>
+                </button>
+              </div>
+
+              <div *ngIf="receiptError" class="field-error mt-2">
+                <span class="material-symbols-outlined" style="font-size:.9rem;">error</span>
+                Please upload your payment receipt to continue
+              </div>
             </div>
           </div>
 
@@ -152,12 +174,14 @@
           <div *ngIf="step===3" class="animate-fadeInUp">
             <h4 class="form-section-title">Review & Confirm</h4>
             <p class="form-section-desc">Double-check your booking details</p>
+
             <div class="d-flex flex-column gap-3">
               <div *ngFor="let row of [
-                {label:'Center', val:center.name},
-                {label:'Trip',   val:trip.name},
-                {label:'Date',   val:trip.date},
-                {label:'Divers', val:divers}
+                {label:'Center',  val:center.name},
+                {label:'Trip',    val:trip.name},
+                {label:'Date',    val:trip.date},
+                {label:'Divers',  val:divers},
+                {label:'Payment', val:paymentLabel}
               ]" class="d-flex justify-content-between py-2 review-row">
                 <span class="review-row-label">{{row.label}}</span>
                 <span class="review-row-value">{{row.val}}</span>
@@ -166,6 +190,24 @@
                 <span class="review-total-label">Amount Due Now</span>
                 <span class="review-total-val">EGP {{amountDue}}</span>
               </div>
+            </div>
+
+            <!-- Receipt preview in step 3 -->
+            <div *ngIf="receiptPreview" class="mt-4">
+              <p class="field-label mb-2">
+                <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">receipt_long</span>
+                Payment Receipt
+              </p>
+              <div class="step3-receipt-wrap">
+                <img [src]="receiptPreview" alt="Payment Receipt" class="step3-receipt-img">
+                <div class="step3-receipt-badge">
+                  <span class="material-symbols-outlined">pending</span> Pending Review
+                </div>
+              </div>
+              <p class="receipt-note mt-2">
+                <span class="material-symbols-outlined" style="font-size:.9rem;">info</span>
+                Our team will verify your payment within a few hours and confirm your booking via email.
+              </p>
             </div>
           </div>
 
@@ -249,11 +291,15 @@
       <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-4 confirm-circle">
         <span class="material-symbols-outlined text-white confirm-icon">check_circle</span>
       </div>
-      <h2 class="confirm-title">Booking Confirmed!</h2>
+      <h2 class="confirm-title">Booking Submitted!</h2>
       <p class="confirm-desc">
-        Your dive at <strong>{{center.name}}</strong> is confirmed.
-        We'll send confirmation details to your email and WhatsApp.
+        Your booking at <strong>{{center.name}}</strong> is under review.
+        We'll verify your payment and confirm via email and WhatsApp within a few hours.
       </p>
+      <div class="confirm-pending-badge mb-4">
+        <span class="material-symbols-outlined">hourglass_top</span>
+        Payment Pending Verification
+      </div>
       <div class="d-flex gap-3 justify-content-center flex-wrap">
         <a routerLink="/home" class="btn-secondary-tonal text-decoration-none px-5 py-3">Back to Home</a>
         <a routerLink="/home/profile"
@@ -262,5 +308,6 @@
         </a>
       </div>
     </div>
+
   </div>
 </div>

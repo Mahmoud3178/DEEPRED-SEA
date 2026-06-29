@@ -4,94 +4,319 @@
     <p class="page-subtitle">Update your public listing</p>
   </div>
 
-  <div *ngIf="saved" class="alert d-flex align-items-center gap-2 mb-4 animate-fadeInUp save-success">
+  <!-- Success -->
+  <div *ngIf="saved"
+       class="alert d-flex align-items-center gap-2 mb-4 animate-fadeInUp save-success">
     <span class="material-symbols-outlined save-success-icon">check_circle</span>
     Profile saved successfully!
   </div>
 
-  <div class="row g-4">
+  <!-- Error -->
+  <div *ngIf="error"
+       class="alert d-flex align-items-center gap-2 mb-4"
+       style="background:rgba(186,26,26,.1);color:#ba1a1a;border:none;border-radius:1rem;font-weight:600;">
+    <span class="material-symbols-outlined">error</span>
+    {{ error }}
+  </div>
+
+  <!-- Loading skeleton -->
+  <div *ngIf="loading && !saved" class="text-center py-5">
+    <span class="material-symbols-outlined" style="font-size:2rem;">progress_activity</span>
+  </div>
+
+  <div *ngIf="!loading || saved" class="row g-4">
+
+    <!-- ── Main Form ── -->
     <div class="col-12 col-lg-8">
-      <div class="card-premium p-4 p-md-5">
-        <form [formGroup]="form" (ngSubmit)="save()">
+      <form [formGroup]="form" (ngSubmit)="save()">
+
+        <!-- Profile Image -->
+        <div class="card-premium p-4 p-md-5 mb-4">
+          <h6 class="section-subheading">Profile Image</h6>
+          <div class="d-flex align-items-center gap-4">
+            <div class="profile-img-wrapper">
+              <img *ngIf="imagePreviewUrl || profileImageUrl"
+                   [src]="imagePreviewUrl || profileImageUrl"
+                   class="profile-img-circle" alt="Center profile">
+              <div *ngIf="!imagePreviewUrl && !profileImageUrl"
+                   class="profile-img-circle profile-img-placeholder d-flex align-items-center justify-content-center">
+                <span class="material-symbols-outlined"
+                      style="font-size:2rem;color:var(--on-surface-variant)">add_a_photo</span>
+              </div>
+              <span *ngIf="imagePreviewUrl" class="img-pending-badge">
+                <span class="material-symbols-outlined" style="font-size:.8rem;">schedule</span>
+                Not saved
+              </span>
+            </div>
+            <div>
+              <input #imageInput type="file" accept="image/*"
+                     (change)="onImageSelected($event)" style="display:none">
+              <button type="button"
+                      class="btn-outline-tonal d-flex align-items-center gap-2"
+                      (click)="imageInput.click()"
+                      [disabled]="imageUploading">
+                <span class="material-symbols-outlined" style="font-size:1rem;">upload</span>
+                {{ imageUploading ? 'Uploading…' : 'Upload Image' }}
+              </button>
+              <p class="field-hint mt-1">JPG, PNG — max 5 MB</p>
+              <p *ngIf="imageError" class="text-danger small mt-1">{{ imageError }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="card-premium p-4 p-md-5 mb-4">
           <h6 class="section-subheading">Basic Information</h6>
-          <div class="row g-3 mb-4">
+          <div class="row g-3">
+
             <div class="col-12">
               <label class="form-label field-label">Center Name *</label>
               <input formControlName="name" type="text" class="form-control-tonal w-100"
                 [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched">
+              <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
+                   class="invalid-feedback d-block">Center name is required.</div>
             </div>
+
             <div class="col-12">
-              <label class="form-label field-label">Location *</label>
-              <input formControlName="location" type="text" class="form-control-tonal w-100">
+              <label class="form-label field-label">Address *</label>
+              <input formControlName="address" type="text" class="form-control-tonal w-100"
+                placeholder="e.g. Sharks Bay, Sharm El Sheikh"
+                [class.is-invalid]="form.get('address')?.invalid && form.get('address')?.touched">
+              <div *ngIf="form.get('address')?.invalid && form.get('address')?.touched"
+                   class="invalid-feedback d-block">Address is required.</div>
             </div>
+
             <div class="col-6">
-              <label class="form-label field-label">Phone</label>
-              <input formControlName="phone" type="tel" class="form-control-tonal w-100">
+              <label class="form-label field-label">Phone *</label>
+              <input formControlName="phone" type="tel" class="form-control-tonal w-100"
+                [class.is-invalid]="form.get('phone')?.invalid && form.get('phone')?.touched">
+              <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched"
+                   class="invalid-feedback d-block">Phone is required.</div>
             </div>
-            <div class="col-6">
-              <label class="form-label field-label">WhatsApp Number</label>
-              <input formControlName="whatsapp" type="text" class="form-control-tonal w-100">
-            </div>
+
             <div class="col-6">
               <label class="form-label field-label">Email *</label>
               <input formControlName="email" type="email" class="form-control-tonal w-100"
                 [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+              <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+                   class="invalid-feedback d-block">Valid email is required.</div>
             </div>
-            <div class="col-6">
-              <label class="form-label field-label">Website</label>
-              <input formControlName="website" type="url" class="form-control-tonal w-100">
-            </div>
-          </div>
 
+            <div class="col-6">
+              <label class="form-label field-label">WhatsApp Number</label>
+              <input formControlName="whatsapp" type="text" class="form-control-tonal w-100"
+                placeholder="+20 100 000 0000">
+            </div>
+
+            <div class="col-6 d-flex align-items-end pb-1">
+              <div class="d-flex align-items-center gap-2">
+                <input formControlName="enableWhatsAppDirect" type="checkbox"
+                       id="enableWhatsApp" class="form-check-input">
+                <label for="enableWhatsApp" class="form-label field-label mb-0">
+                  Enable WhatsApp Direct
+                </label>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label field-label">Website</label>
+              <input formControlName="website" type="url" class="form-control-tonal w-100"
+                placeholder="https://yoursite.com">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label field-label">Operating Hours</label>
+              <input formControlName="operatingHours" type="text" class="form-control-tonal w-100"
+                placeholder="e.g. Daily 7AM – 6PM">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="card-premium p-4 p-md-5 mb-4">
           <h6 class="section-subheading">About Your Center</h6>
-          <div class="row g-3 mb-4">
+          <div class="row g-3">
+
             <div class="col-12">
               <label class="form-label field-label">Description *</label>
-              <textarea formControlName="description" rows="4" class="form-control-tonal w-100"
-                style="resize:vertical;"
-                [class.is-invalid]="form.get('description')?.invalid && form.get('description')?.touched"></textarea>
+              <textarea formControlName="description" rows="4"
+                class="form-control-tonal w-100" style="resize:vertical;"
+                [class.is-invalid]="form.get('description')?.invalid && form.get('description')?.touched">
+              </textarea>
+              <div *ngIf="form.get('description')?.invalid && form.get('description')?.touched"
+                   class="invalid-feedback d-block">Description is required.</div>
             </div>
-            <div class="col-6">
-              <label class="form-label field-label">Certifications</label>
-              <input formControlName="certifications" type="text" placeholder="PADI, SSI, CMAS" class="form-control-tonal w-100">
-            </div>
-            <div class="col-6">
-              <label class="form-label field-label">Languages Spoken</label>
-              <input formControlName="languages" type="text" placeholder="Arabic, English" class="form-control-tonal w-100">
-            </div>
-          </div>
 
-          <button type="submit" class="btn-primary-gradient px-5 py-3 d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined" style="font-size:1rem;">save</span> Save Profile
-          </button>
-        </form>
-      </div>
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="card-premium p-4 p-md-5 mb-4">
+          <h6 class="section-subheading">Social Media</h6>
+          <div class="row g-3">
+
+            <div class="col-12">
+              <label class="form-label field-label">
+                <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">link</span>
+                Facebook URL
+              </label>
+              <input formControlName="facebook" type="url" class="form-control-tonal w-100"
+                placeholder="https://facebook.com/yourcenter">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label field-label">
+                <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">photo_camera</span>
+                Instagram URL
+              </label>
+              <input formControlName="instagram" type="url" class="form-control-tonal w-100"
+                placeholder="https://instagram.com/yourcenter">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label field-label">
+                <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">music_video</span>
+                TikTok URL
+              </label>
+              <input formControlName="tiktok" type="url" class="form-control-tonal w-100"
+                placeholder="https://tiktok.com/@yourcenter">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Notifications & Visibility -->
+        <div class="card-premium p-4 p-md-5 mb-4">
+          <h6 class="section-subheading">Settings</h6>
+          <div class="d-flex flex-column gap-3">
+
+            <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                 style="background:var(--surface-container);">
+              <div>
+                <div class="field-label mb-0">Visible in Public Search</div>
+                <div class="field-hint">Divers can discover your center</div>
+              </div>
+              <input formControlName="isVisibleInPublicSearch" type="checkbox"
+                     class="form-check-input" style="width:1.2rem;height:1.2rem;">
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                 style="background:var(--surface-container);">
+              <div>
+                <div class="field-label mb-0">Booking Alerts</div>
+                <div class="field-hint">Get notified when a new booking is made</div>
+              </div>
+              <input formControlName="receiveBookingAlerts" type="checkbox"
+                     class="form-check-input" style="width:1.2rem;height:1.2rem;">
+            </div>
+
+            <div class="d-flex align-items-center justify-content-between p-3 rounded-3"
+                 style="background:var(--surface-container);">
+              <div>
+                <div class="field-label mb-0">Review Alerts</div>
+                <div class="field-hint">Get notified when a diver leaves a review</div>
+              </div>
+              <input formControlName="receiveReviewAlerts" type="checkbox"
+                     class="form-check-input" style="width:1.2rem;height:1.2rem;">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="btn-primary-gradient px-5 py-3 d-flex align-items-center gap-2"
+                [disabled]="loading">
+          <span *ngIf="!loading" class="material-symbols-outlined" style="font-size:1rem;">save</span>
+          <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"></span>
+          {{ loading ? (imageUploading ? 'Uploading image…' : 'Saving…') : 'Save Profile' }}
+        </button>
+
+      </form>
     </div>
 
-    <!-- Preview sidebar -->
+    <!-- ── Preview Sidebar ── -->
     <div class="col-12 col-lg-4">
-      <div class="card-premium" style="overflow:hidden;position:sticky;top:100px;">
+      <div class="card-premium" style="overflow:hidden; position:sticky; top:100px;">
         <div class="preview-header position-relative">
           <div class="position-absolute bottom-0 start-0 p-3">
-            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold preview-logo">
-              {{form.get('name')?.value?.charAt(0)}}
+            <img *ngIf="imagePreviewUrl || profileImageUrl"
+                 [src]="imagePreviewUrl || profileImageUrl"
+                 class="rounded-circle preview-logo"
+                 style="object-fit:cover;" alt="">
+            <div *ngIf="!imagePreviewUrl && !profileImageUrl"
+                 class="rounded-circle d-flex align-items-center justify-content-center fw-bold preview-logo">
+              {{ nameInitial }}
             </div>
           </div>
         </div>
+
         <div class="p-4">
-          <h6 class="preview-name">{{form.get('name')?.value}}</h6>
-          <div class="d-flex align-items-center gap-1 mb-3 preview-loc">
+          <h6 class="preview-name">
+            {{ form.get('name')?.value || 'Center Name' }}
+          </h6>
+
+          <div class="d-flex align-items-center gap-1 mb-2 preview-loc">
             <span class="material-symbols-outlined preview-loc-icon">location_on</span>
-            {{form.get('location')?.value}}
+            {{ form.get('address')?.value || 'Address' }}
           </div>
-          <p class="preview-desc">{{form.get('description')?.value | slice:0:120}}...</p>
-          <div class="d-flex align-items-center gap-1 mt-2">
-            <span class="material-symbols-outlined preview-star">star</span>
-            <span class="preview-rating">4.9</span>
-            <span class="preview-reviews">(312 reviews)</span>
+
+          <p class="preview-desc">
+            {{ (form.get('description')?.value | slice:0:120) || 'Your center description will appear here…' }}
+            <span *ngIf="form.get('description')?.value?.length > 120">…</span>
+          </p>
+
+          <!-- Social links preview -->
+          <div *ngIf="form.get('facebook')?.value || form.get('instagram')?.value || form.get('tiktok')?.value"
+               class="d-flex gap-2 mt-3">
+            <a *ngIf="form.get('facebook')?.value"
+               [href]="form.get('facebook')?.value" target="_blank"
+               class="border-0 p-2 rounded-2 action-view d-flex align-items-center">
+              <span class="material-symbols-outlined" style="font-size:1rem;">link</span>
+            </a>
+            <a *ngIf="form.get('instagram')?.value"
+               [href]="form.get('instagram')?.value" target="_blank"
+               class="border-0 p-2 rounded-2 action-view d-flex align-items-center">
+              <span class="material-symbols-outlined" style="font-size:1rem;">photo_camera</span>
+            </a>
+            <a *ngIf="form.get('tiktok')?.value"
+               [href]="form.get('tiktok')?.value" target="_blank"
+               class="border-0 p-2 rounded-2 action-view d-flex align-items-center">
+              <span class="material-symbols-outlined" style="font-size:1rem;">music_video</span>
+            </a>
           </div>
+
+          <!-- Visibility badge -->
+          <div class="mt-3">
+            <span [class]="form.get('isVisibleInPublicSearch')?.value ? 'badge-active' : 'badge-blocked'">
+              <span class="material-symbols-outlined" style="font-size:.8rem;vertical-align:middle;">
+                {{ form.get('isVisibleInPublicSearch')?.value ? 'visibility' : 'visibility_off' }}
+              </span>
+              {{ form.get('isVisibleInPublicSearch')?.value ? 'Visible to divers' : 'Hidden from search' }}
+            </span>
+          </div>
+
+          <!-- Contact quick info -->
+          <div class="d-flex flex-column gap-1 mt-3"
+               style="font-size:.8rem; color:var(--on-surface-variant);">
+            <div *ngIf="form.get('phone')?.value" class="d-flex align-items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:.9rem;">call</span>
+              {{ form.get('phone')?.value }}
+            </div>
+            <div *ngIf="form.get('email')?.value" class="d-flex align-items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:.9rem;">mail</span>
+              {{ form.get('email')?.value }}
+            </div>
+            <div *ngIf="form.get('website')?.value" class="d-flex align-items-center gap-1">
+              <span class="material-symbols-outlined" style="font-size:.9rem;">language</span>
+              {{ form.get('website')?.value }}
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
+
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   selectedTab  = 'bookings';
   selectedDive: any = null;
 
@@ -25,6 +25,11 @@ export class ProfileComponent {
   passError     = '';
   confirmDelete = false;
   logSaved      = false;
+
+  // Loading states
+  loadingProfile  = false;
+  loadingPassword = false;
+  profileError    = '';
 
   // Password visibility
   showCurrent = false;
@@ -45,6 +50,34 @@ export class ProfileComponent {
 
   constructor(public auth: AuthService) {}
 
+  ngOnInit(): void {
+    this.loadProfile();
+  }
+
+  // ── جلب بيانات البروفايل الحقيقية من السيرفر ──
+  loadProfile(): void {
+    this.loadingProfile = true;
+    this.profileError = '';
+
+    this.auth.getMyProfile().subscribe({
+      next: (user) => {
+        this.loadingProfile = false;
+        this.editName  = user.name  || '';
+        this.editEmail = user.email || '';
+      },
+      error: (err) => {
+        this.loadingProfile = false;
+        // لو فشل، استخدم البيانات المخزّنة محلياً كـ fallback
+        const cached = this.auth.currentUser;
+        if (cached) {
+          this.editName  = cached.name  || '';
+          this.editEmail = cached.email || '';
+        }
+        this.profileError = err.message || 'Could not load latest profile data.';
+      }
+    });
+  }
+
   onAvatarChange(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -54,19 +87,44 @@ export class ProfileComponent {
   }
 
   saveProfile(): void {
+    // لو السيرفر عنده endpoint لتحديث البروفايل (مثلاً PUT /auth/me)
+    // هيتم ربطه هنا لاحقاً بنفس الطريقة. دلوقتي بيحدّث الواجهة فقط.
     this.saveSuccess = true;
     setTimeout(() => this.saveSuccess = false, 3000);
   }
 
+  // ── ربط تغيير الباسورد بالـ API الحقيقي ──
   changePassword(): void {
     this.passError = '';
-    if (!this.currentPass || !this.newPass) { this.passError = 'Please fill all fields.'; return; }
-    if (this.newPass !== this.confirmPass)   { this.passError = 'Passwords do not match.'; return; }
-    if (this.newPass.length < 8)             { this.passError = 'Minimum 8 characters.'; return; }
-    this.passSuccess = true;
-    this.currentPass = this.newPass = this.confirmPass = '';
-    this.showCurrent = this.showNew = this.showConfirm = false;
-    setTimeout(() => this.passSuccess = false, 3000);
+
+    if (!this.currentPass || !this.newPass) {
+      this.passError = 'Please fill all fields.';
+      return;
+    }
+    if (this.newPass !== this.confirmPass) {
+      this.passError = 'Passwords do not match.';
+      return;
+    }
+    if (this.newPass.length < 6) {
+      this.passError = 'Minimum 6 characters.';
+      return;
+    }
+
+    this.loadingPassword = true;
+
+    this.auth.changePassword(this.currentPass, this.newPass).subscribe({
+      next: () => {
+        this.loadingPassword = false;
+        this.passSuccess = true;
+        this.currentPass = this.newPass = this.confirmPass = '';
+        this.showCurrent = this.showNew = this.showConfirm = false;
+        setTimeout(() => this.passSuccess = false, 3000);
+      },
+      error: (err) => {
+        this.loadingPassword = false;
+        this.passError = err.message || 'Failed to change password. Please try again.';
+      }
+    });
   }
 
   deleteAccount(): void {

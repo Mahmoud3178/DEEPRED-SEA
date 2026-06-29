@@ -1,115 +1,548 @@
 <div class="animate-fadeInUp">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
     <div>
       <h2 class="page-title">Trip Management</h2>
-      <p class="page-subtitle">{{trips.length}} trips configured</p>
+      <p class="page-subtitle">{{filteredOfferings.length}} trips configured</p>
     </div>
     <button (click)="openAdd()" class="btn-primary-gradient d-flex align-items-center gap-2 px-4 py-2">
       <span class="material-symbols-outlined" style="font-size:1rem;">add</span>Add New Trip
     </button>
   </div>
 
+  <!-- ── Filters ────────────────────────────────────────────────── -->
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <input
+      [(ngModel)]="filterSearch"
+      (ngModelChange)="applyFilters()"
+      type="text"
+      placeholder="Search trips…"
+      class="form-control-tonal filter-input">
+
+    <select [(ngModel)]="filterType" (ngModelChange)="applyFilters()" class="form-control-tonal filter-select">
+      <option value="">All Types</option>
+      <option value="DayTrip">Day Trip</option>
+      <option value="Liveaboard">Liveaboard</option>
+      <option value="Course">Course</option>
+      <option value="Freediving">Freediving</option>
+    </select>
+
+    <select [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()" class="form-control-tonal filter-select">
+      <option value="">All Status</option>
+      <option value="published">Published</option>
+      <option value="unpublished">Unpublished</option>
+      <option value="available">Available</option>
+      <option value="unavailable">Unavailable</option>
+    </select>
+  </div>
+
+  <!-- ── Global error ───────────────────────────────────────────── -->
+  <div *ngIf="errorMsg" class="alert alert-danger mt-3">{{errorMsg}}</div>
+
+  <!-- ── Loading ────────────────────────────────────────────────── -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <span class="material-symbols-outlined spin" style="font-size:2rem;">progress_activity</span>
+  </div>
+
+  <!-- ── Empty state ────────────────────────────────────────────── -->
+  <div *ngIf="!isLoading && filteredOfferings.length === 0 && !errorMsg" class="text-center py-5">
+    <span class="material-symbols-outlined" style="font-size:3rem; color:var(--outline);">sailing</span>
+    <p class="mt-2" style="color:var(--on-surface-variant);">No trips found. Add your first trip!</p>
+  </div>
+
+  <!-- ── Cards grid ─────────────────────────────────────────────── -->
   <div class="row g-4">
-    <div class="col-12 col-md-6 col-xl-4" *ngFor="let t of trips">
+    <div class="col-12 col-md-6 col-xl-4" *ngFor="let o of filteredOfferings; trackBy: trackById">
       <div class="card-premium p-4 h-100 d-flex flex-column">
-        <div class="d-flex align-items-start justify-content-between mb-3">
-          <div>
-            <h6 class="trip-name-h mb-2">{{t.name}}</h6>
-            <span class="badge-active">{{t.type}}</span>
+
+        <!-- Title + type badge -->
+        <div class="d-flex align-items-start justify-content-between mb-2">
+          <div class="flex-1 me-2">
+            <h6 class="trip-name-h mb-1">{{o.title}}</h6>
+            <span class="badge-active">{{o.type}}</span>
           </div>
-          <button (click)="toggleStatus(t)" class="px-3 py-1 rounded-pill border-0"
-            [class.status-active]="t.status==='active'"
-            [class.status-draft]="t.status!=='active'">
-            {{t.status}}
+          <!-- Publish toggle -->
+          <button
+            (click)="togglePublish(o)"
+            [disabled]="isToggling === o.id"
+            class="px-3 py-1 rounded-pill border-0"
+            [class.status-active]="o.isPublished"
+            [class.status-draft]="!o.isPublished">
+            <span *ngIf="isToggling !== o.id">{{o.isPublished ? 'Published' : 'Draft'}}</span>
+            <span *ngIf="isToggling === o.id" class="material-symbols-outlined spin" style="font-size:.85rem;">progress_activity</span>
           </button>
         </div>
 
+        <!-- Availability pill -->
         <div class="mb-3">
-          <div class="d-flex justify-content-between mb-1">
-            <span class="occ-label">Occupancy</span>
-            <span class="occ-val">{{t.booked}}/{{t.capacity}}</span>
-          </div>
-          <div class="occ-track">
-            <div class="occ-bar" [style.width]="(t.booked/t.capacity*100)+'%'"></div>
-          </div>
+          <span class="avail-pill" [class.avail-on]="o.isAvailable" [class.avail-off]="!o.isAvailable">
+            <span class="material-symbols-outlined" style="font-size:.75rem;">{{o.isAvailable ? 'check_circle' : 'cancel'}}</span>
+            {{o.isAvailable ? 'Available' : 'Unavailable'}}
+          </span>
         </div>
 
+        <!-- Price row -->
+        <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+          <span class="trip-price-val">EGP {{o.basePrice}}</span>
+          <span *ngIf="o.discount && o.discount > 0" class="discount-badge">-{{o.discount}}%</span>
+        </div>
+
+        <!-- Equipment pricing (when set) -->
+        <div *ngIf="o.priceWithEquipment || o.priceWithoutEquipment" class="equip-prices mb-3">
+          <span *ngIf="o.priceWithEquipment" class="equip-price-item">
+            <span class="material-symbols-outlined" style="font-size:.8rem;">scuba_diving</span>
+            With equip: EGP {{o.priceWithEquipment}}
+          </span>
+          <span *ngIf="o.priceWithoutEquipment" class="equip-price-item">
+            <span class="material-symbols-outlined" style="font-size:.8rem;">person</span>
+            No equip: EGP {{o.priceWithoutEquipment}}
+          </span>
+        </div>
+
+        <!-- Meta row -->
         <div class="d-flex gap-3 mb-3 flex-wrap">
-          <div class="d-flex align-items-center gap-1">
-            <span class="material-symbols-outlined trip-meta-icon trip-meta-text">water</span>
-            <span class="trip-meta-text">{{t.depth}}</span>
+          <div *ngIf="o.departureDate" class="d-flex align-items-center gap-1">
+            <span class="material-symbols-outlined trip-meta-icon trip-meta-text">calendar_today</span>
+            <span class="trip-meta-text">{{o.departureDate | date:'mediumDate'}}</span>
           </div>
-          <div class="d-flex align-items-center gap-1">
-            <span class="material-symbols-outlined trip-meta-icon trip-meta-text">schedule</span>
-            <span class="trip-meta-text">{{t.duration}}</span>
+          <div *ngIf="o.capacityLimit" class="d-flex align-items-center gap-1">
+            <span class="material-symbols-outlined trip-meta-icon trip-meta-text">group</span>
+            <span class="trip-meta-text">{{o.capacityLimit}} cap</span>
+          </div>
+          <div *ngIf="o.difficulty" class="d-flex align-items-center gap-1">
+            <span class="material-symbols-outlined trip-meta-icon trip-meta-text">signal_cellular_alt</span>
+            <span class="trip-meta-text">{{o.difficulty}}</span>
           </div>
         </div>
 
+        <!-- Dive sites tags -->
+        <div *ngIf="o.diveSites && o.diveSites.length" class="dive-sites-row mb-3">
+          <span *ngFor="let s of o.diveSites" class="dive-site-tag">{{s}}</span>
+        </div>
+
+        <!-- Actions -->
         <div class="d-flex align-items-center justify-content-between mt-auto pt-3"
              style="border-top:1px solid var(--surface-container-high);">
-          <span class="trip-price-val">EGP {{t.price}}</span>
+          <button (click)="openAvailability(o)" class="border-0 p-2 rounded-2 trip-avail-btn"
+                  title="Manage Availability">
+            <span class="material-symbols-outlined trip-avail-icon">event_available</span>
+          </button>
           <div class="d-flex gap-2">
-            <button (click)="openEdit(t)" class="border-0 p-2 rounded-2 trip-edit-btn">
+            <button (click)="openEdit(o)" class="border-0 p-2 rounded-2 trip-edit-btn"
+                    [disabled]="isDeleting === o.id">
               <span class="material-symbols-outlined trip-edit-icon">edit</span>
             </button>
-            <button (click)="delete(t.id)" class="border-0 p-2 rounded-2 trip-del-btn">
-              <span class="material-symbols-outlined trip-del-icon">delete</span>
+            <button (click)="delete(o.id)" class="border-0 p-2 rounded-2 trip-del-btn"
+                    [disabled]="isDeleting === o.id">
+              <span class="material-symbols-outlined trip-del-icon">
+                {{isDeleting === o.id ? 'hourglass_empty' : 'delete'}}
+              </span>
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal -->
+
+<!-- ================================================================
+     TRIP FORM MODAL (Add / Edit)
+================================================================ -->
 <div *ngIf="showModal" class="position-fixed d-flex align-items-center justify-content-center p-3 modal-overlay">
   <div class="card-premium p-4 p-md-5 animate-fadeInUp modal-card">
+
     <div class="d-flex align-items-center justify-content-between mb-4">
-      <h5 class="modal-title">{{editTrip ? 'Edit Trip' : 'Add New Trip'}}</h5>
-      <button (click)="showModal=false" class="border-0 bg-transparent p-1" style="cursor:pointer;">
+      <h5 class="modal-title">{{editOffering ? 'Edit Trip' : 'Add New Trip'}}</h5>
+      <button (click)="closeModal()" class="border-0 bg-transparent p-1" style="cursor:pointer;">
         <span class="material-symbols-outlined" style="color:var(--on-surface-variant);">close</span>
       </button>
     </div>
+
+    <div *ngIf="errorMsg" class="alert alert-danger mb-3">{{errorMsg}}</div>
+
     <form [formGroup]="tripForm" (ngSubmit)="save()">
       <div class="row g-3">
+
+        <!-- Title -->
         <div class="col-12">
           <label class="form-label field-label">Trip Name</label>
-          <input formControlName="name" type="text" placeholder="e.g. Morning Reef Dive"
+          <input formControlName="title" type="text" placeholder="e.g. Morning Reef Dive"
             class="form-control-tonal w-100"
-            [class.is-invalid]="tripForm.get('name')?.invalid && tripForm.get('name')?.touched">
+            [class.is-invalid]="tripForm.get('title')?.invalid && tripForm.get('title')?.touched">
+          <div class="invalid-feedback">Trip name is required.</div>
         </div>
+
+        <!-- Type -->
         <div class="col-6">
           <label class="form-label field-label">Trip Type</label>
           <select formControlName="type" class="form-control-tonal w-100">
-            <option>Day Trip</option><option>Liveaboard</option>
-            <option>Course</option><option>Freediving</option>
+            <option value="DayTrip">Day Trip</option>
+            <option value="Liveaboard">Liveaboard</option>
+            <option value="Course">Course</option>
+            <option value="Freediving">Freediving</option>
           </select>
         </div>
+
+        <!-- Base Price -->
         <div class="col-6">
           <label class="form-label field-label">Price (EGP)</label>
-          <input formControlName="price" type="number" placeholder="350" class="form-control-tonal w-100">
+          <input formControlName="basePrice" type="number" placeholder="350"
+            class="form-control-tonal w-100"
+            [class.is-invalid]="tripForm.get('basePrice')?.invalid && tripForm.get('basePrice')?.touched">
+          <div class="invalid-feedback">Valid price is required.</div>
         </div>
+
+        <!-- Discount -->
+        <div class="col-6">
+          <label class="form-label field-label">Discount (%)</label>
+          <input formControlName="discount" type="number" placeholder="0"
+            class="form-control-tonal w-100">
+        </div>
+
+        <!-- Capacity -->
         <div class="col-6">
           <label class="form-label field-label">Max Capacity</label>
-          <input formControlName="capacity" type="number" placeholder="10" class="form-control-tonal w-100">
+          <input formControlName="capacityLimit" type="number" placeholder="10"
+            class="form-control-tonal w-100"
+            [class.is-invalid]="tripForm.get('capacityLimit')?.invalid && tripForm.get('capacityLimit')?.touched">
+          <div class="invalid-feedback">Capacity is required.</div>
         </div>
+
+        <!-- Difficulty -->
         <div class="col-6">
-          <label class="form-label field-label">Max Depth</label>
-          <input formControlName="depth" type="text" placeholder="18m" class="form-control-tonal w-100">
+          <label class="form-label field-label">Difficulty</label>
+          <input formControlName="difficulty" type="text" placeholder="e.g. Beginner"
+            class="form-control-tonal w-100">
         </div>
+
+        <!-- Diver Level -->
+        <div class="col-6">
+          <label class="form-label field-label">Diver Level</label>
+          <input formControlName="diverLevel" type="text" placeholder="e.g. Open Water"
+            class="form-control-tonal w-100">
+        </div>
+
+        <!-- Departure Date -->
         <div class="col-12">
-          <label class="form-label field-label">Duration</label>
-          <input formControlName="duration" type="text" placeholder="3 hrs" class="form-control-tonal w-100">
+          <label class="form-label field-label">Departure Date</label>
+          <input formControlName="departureDate" type="date" class="form-control-tonal w-100">
         </div>
+
+        <!-- Schedule -->
+        <div class="col-12">
+          <label class="form-label field-label">Schedule</label>
+          <input formControlName="schedule" type="text" placeholder="e.g. Every Saturday 8AM"
+            class="form-control-tonal w-100">
+        </div>
+
+        <!-- Dive Sites -->
+        <div class="col-12">
+          <label class="form-label field-label">Dive Sites</label>
+          <div class="dive-site-input-row">
+            <input
+              [(ngModel)]="diveSiteInput"
+              [ngModelOptions]="{standalone: true}"
+              (keydown)="onDiveSiteKeydown($event)"
+              type="text"
+              placeholder="Type a site and press Enter or Add"
+              class="form-control-tonal flex-1">
+            <button type="button" (click)="addDiveSite()" class="btn-secondary-tonal px-3">Add</button>
+          </div>
+          <div *ngIf="diveSitesList.length" class="dive-sites-row mt-2">
+            <span *ngFor="let s of diveSitesList; let i = index" class="dive-site-tag dive-site-removable">
+              {{s}}
+              <span class="material-symbols-outlined ds-remove" (click)="removeDiveSite(i)">close</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12">
+          <label class="form-label field-label">Description</label>
+          <textarea formControlName="description" rows="3" placeholder="Trip details…"
+            class="form-control-tonal w-100"></textarea>
+        </div>
+
+        <!-- Cancellation Policy -->
+        <div class="col-12">
+          <label class="form-label field-label">Cancellation Policy</label>
+          <textarea formControlName="cancellationPolicy" rows="2"
+            placeholder="e.g. Free cancellation 48h before"
+            class="form-control-tonal w-100"></textarea>
+        </div>
+
+        <!-- Is Available -->
+        <div class="col-12 d-flex align-items-center gap-2">
+          <input formControlName="isAvailable" type="checkbox" id="isAvailable" class="form-check-input">
+          <label class="form-label field-label mb-0" for="isAvailable">Available for booking</label>
+        </div>
+
+        <!-- Main Photo -->
+        <div class="col-12">
+          <label class="form-label field-label">Main Photo</label>
+          <div class="photo-upload-box" (click)="mainPhotoInput.click()">
+            <img *ngIf="mainPhotoPreview" [src]="mainPhotoPreview" class="photo-preview-img">
+            <div *ngIf="!mainPhotoPreview" class="photo-upload-placeholder">
+              <span class="material-symbols-outlined photo-upload-icon">add_photo_alternate</span>
+              <span class="photo-upload-text">Click to upload main photo</span>
+            </div>
+            <input #mainPhotoInput type="file" accept="image/*" class="d-none"
+                   (change)="onMainPhoto($event)">
+          </div>
+        </div>
+
+        <!-- Additional Photos -->
+        <div class="col-12">
+          <label class="form-label field-label d-flex align-items-center justify-content-between">
+            <span>Additional Photos</span>
+            <span class="photos-count-badge">{{additionalPhotos.length}}/10</span>
+          </label>
+          <div class="additional-photos-grid">
+            <div *ngFor="let p of additionalPhotos; let i = index" class="additional-photo-item">
+              <img [src]="p" class="additional-photo-img">
+              <button (click)="removeAdditionalPhoto(i)" class="additional-photo-remove" type="button">
+                <span class="material-symbols-outlined" style="font-size:.85rem;">close</span>
+              </button>
+            </div>
+            <div *ngIf="additionalPhotos.length < 10" class="additional-photo-add"
+                 (click)="addMoreInput.click()">
+              <span class="material-symbols-outlined" style="font-size:1.5rem; color:var(--outline);">add</span>
+              <input #addMoreInput type="file" accept="image/*" multiple class="d-none"
+                     (change)="onAdditionalPhotos($event)">
+            </div>
+          </div>
+          <p class="photos-hint">Max 10 additional photos</p>
+        </div>
+
       </div>
+
       <div class="d-flex gap-3 mt-4">
-        <button type="button" (click)="showModal=false" class="btn-secondary-tonal flex-fill py-3">Cancel</button>
-        <button type="submit" class="btn-primary-gradient flex-fill py-3 d-flex align-items-center justify-content-center gap-2">
-          <span class="material-symbols-outlined" style="font-size:1rem;">save</span>
-          {{editTrip ? 'Save Changes' : 'Add Trip'}}
+        <button type="button" (click)="closeModal()"
+                class="btn-secondary-tonal flex-fill py-3"
+                [disabled]="isSaving">Cancel</button>
+        <button type="submit"
+                class="btn-primary-gradient flex-fill py-3 d-flex align-items-center justify-content-center gap-2"
+                [disabled]="isSaving">
+          <span class="material-symbols-outlined" style="font-size:1rem;">
+            {{isSaving ? 'hourglass_empty' : 'save'}}
+          </span>
+          {{isSaving ? 'Saving…' : (editOffering ? 'Save Changes' : 'Add Trip')}}
         </button>
       </div>
     </form>
+
+  </div>
+</div>
+
+
+<!-- ================================================================
+     AVAILABILITY MODAL
+================================================================ -->
+<div *ngIf="showAvailModal" class="position-fixed d-flex align-items-center justify-content-center p-3 modal-overlay">
+  <div class="card-premium p-4 p-md-5 animate-fadeInUp avail-modal-card">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h5 class="modal-title mb-0">Availability</h5>
+        <p class="page-subtitle mb-0" style="font-size:.8rem;">{{availOfferingTitle}}</p>
+      </div>
+      <button (click)="closeAvailModal()" class="border-0 bg-transparent p-1" style="cursor:pointer;">
+        <span class="material-symbols-outlined" style="color:var(--on-surface-variant);">close</span>
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="availError" class="alert alert-danger mb-3">{{availError}}</div>
+
+    <!-- Loading -->
+    <div *ngIf="availLoading" class="text-center py-4">
+      <span class="material-symbols-outlined spin" style="font-size:2rem;">progress_activity</span>
+    </div>
+
+    <div *ngIf="!availLoading">
+
+      <!-- Tabs -->
+      <div class="avail-tabs mb-4">
+        <button class="avail-tab" [class.avail-tab-active]="availTab==='schedule'"
+                (click)="availTab='schedule'">
+          <span class="material-symbols-outlined" style="font-size:1rem;">calendar_month</span>
+          Schedule
+        </button>
+        <button class="avail-tab" [class.avail-tab-active]="availTab==='blackout'"
+                (click)="availTab='blackout'">
+          <span class="material-symbols-outlined" style="font-size:1rem;">event_busy</span>
+          Blackout Dates
+          <span *ngIf="blackoutDates.length" class="tab-count-badge">{{blackoutDates.length}}</span>
+        </button>
+        <button class="avail-tab" [class.avail-tab-active]="availTab==='pricing'"
+                (click)="availTab='pricing'">
+          <span class="material-symbols-outlined" style="font-size:1rem;">sell</span>
+          Pricing Rules
+          <span *ngIf="pricingRules.length" class="tab-count-badge">{{pricingRules.length}}</span>
+        </button>
+      </div>
+
+      <!-- ── TAB: Weekly Schedule ── -->
+      <div *ngIf="availTab==='schedule'">
+        <div class="schedule-grid">
+          <ng-container *ngFor="let row of weeklyRules">
+            <div class="schedule-row" [class.schedule-row-closed]="row.isClosed">
+              <!-- Day label + closed toggle -->
+              <div class="d-flex align-items-center gap-2 schedule-day-col">
+                <input type="checkbox" [id]="'closed-'+row.dayOfWeek"
+                       [(ngModel)]="row.isClosed"
+                       class="form-check-input"
+                       title="Mark as closed">
+                <label [for]="'closed-'+row.dayOfWeek" class="schedule-day-label">
+                  {{row.label}}
+                </label>
+                <span *ngIf="row.isClosed" class="closed-badge">Closed</span>
+              </div>
+              <!-- Times (hidden when closed) -->
+              <div class="schedule-times-col" [class.d-none]="row.isClosed">
+                <input type="time" [(ngModel)]="row.startTime" class="form-control-tonal time-input">
+                <span class="time-separator">—</span>
+                <input type="time" [(ngModel)]="row.endTime"   class="form-control-tonal time-input">
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button (click)="saveSchedule()"
+                  class="btn-primary-gradient px-5 py-2 d-flex align-items-center gap-2"
+                  [disabled]="availSaving">
+            <span class="material-symbols-outlined" style="font-size:1rem;">
+              {{availSaving ? 'hourglass_empty' : 'save'}}
+            </span>
+            {{availSaving ? 'Saving…' : 'Save Schedule'}}
+          </button>
+        </div>
+      </div>
+
+      <!-- ── TAB: Blackout Dates ── -->
+      <div *ngIf="availTab==='blackout'">
+
+        <!-- Add form -->
+        <div class="avail-add-card mb-4">
+          <p class="field-label mb-3">Block a date range</p>
+          <div class="row g-2">
+            <div class="col-12 col-sm-5">
+              <label class="form-label field-label" style="font-size:.75rem;">From</label>
+              <input [formControl]="bStartsAt" type="date" class="form-control-tonal w-100"
+                     [class.is-invalid]="bStartsAt.invalid && bStartsAt.touched">
+            </div>
+            <div class="col-12 col-sm-5">
+              <label class="form-label field-label" style="font-size:.75rem;">To</label>
+              <input [formControl]="bEndsAt" type="date" class="form-control-tonal w-100"
+                     [class.is-invalid]="bEndsAt.invalid && bEndsAt.touched">
+            </div>
+            <div class="col-12">
+              <label class="form-label field-label" style="font-size:.75rem;">Reason (optional)</label>
+              <input [formControl]="bReason" type="text" placeholder="e.g. Public holiday"
+                     class="form-control-tonal w-100">
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button (click)="addBlackout()" class="btn-primary-gradient px-4 py-2 d-flex align-items-center gap-1"
+                      [disabled]="isAddingBlackout">
+                <span class="material-symbols-outlined" style="font-size:1rem;">
+                  {{isAddingBlackout ? 'hourglass_empty' : 'add'}}
+                </span>
+                {{isAddingBlackout ? 'Adding…' : 'Add Blackout'}}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- List -->
+        <div *ngIf="blackoutDates.length === 0" class="text-center py-3" style="color:var(--on-surface-variant);">
+          No blackout dates set.
+        </div>
+        <div *ngFor="let b of blackoutDates" class="blackout-item">
+          <div class="d-flex align-items-start gap-2 flex-1">
+            <span class="material-symbols-outlined" style="font-size:1.1rem; color:var(--error);">event_busy</span>
+            <div>
+              <div class="blackout-dates-text">{{formatDate(b.startsAt)}} — {{formatDate(b.endsAt)}}</div>
+              <div *ngIf="b.reason" class="blackout-reason">{{b.reason}}</div>
+            </div>
+          </div>
+          <button (click)="removeBlackout(b.id)" class="border-0 bg-transparent p-1"
+                  [disabled]="isDeletingBlackout === b.id" style="cursor:pointer;">
+            <span class="material-symbols-outlined" style="font-size:1.1rem; color:var(--error);">
+              {{isDeletingBlackout === b.id ? 'hourglass_empty' : 'delete'}}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── TAB: Pricing Rules ── -->
+      <div *ngIf="availTab==='pricing'">
+
+        <!-- Add form -->
+        <div class="avail-add-card mb-4">
+          <p class="field-label mb-3">Add a special price period</p>
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="form-label field-label" style="font-size:.75rem;">Name (optional)</label>
+              <input [formControl]="pName" type="text" placeholder="e.g. Early Bird"
+                     class="form-control-tonal w-100">
+            </div>
+            <div class="col-12 col-sm-4">
+              <label class="form-label field-label" style="font-size:.75rem;">From</label>
+              <input [formControl]="pStartsAt" type="date" class="form-control-tonal w-100"
+                     [class.is-invalid]="pStartsAt.invalid && pStartsAt.touched">
+            </div>
+            <div class="col-12 col-sm-4">
+              <label class="form-label field-label" style="font-size:.75rem;">To</label>
+              <input [formControl]="pEndsAt" type="date" class="form-control-tonal w-100"
+                     [class.is-invalid]="pEndsAt.invalid && pEndsAt.touched">
+            </div>
+            <div class="col-12 col-sm-4">
+              <label class="form-label field-label" style="font-size:.75rem;">Special Price (EGP)</label>
+              <input [formControl]="pSpecialPrice" type="number" placeholder="250"
+                     class="form-control-tonal w-100"
+                     [class.is-invalid]="pSpecialPrice.invalid && pSpecialPrice.touched">
+            </div>
+            <div class="col-12 d-flex justify-content-end">
+              <button (click)="addPricingRule()" class="btn-primary-gradient px-4 py-2 d-flex align-items-center gap-1"
+                      [disabled]="isAddingPricing">
+                <span class="material-symbols-outlined" style="font-size:1rem;">
+                  {{isAddingPricing ? 'hourglass_empty' : 'add'}}
+                </span>
+                {{isAddingPricing ? 'Adding…' : 'Add Rule'}}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- List -->
+        <div *ngIf="pricingRules.length === 0" class="text-center py-3" style="color:var(--on-surface-variant);">
+          No pricing rules set.
+        </div>
+        <div *ngFor="let p of pricingRules" class="pricing-item">
+          <div class="d-flex align-items-start gap-2 flex-1">
+            <span class="material-symbols-outlined" style="font-size:1.1rem; color:var(--primary);">sell</span>
+            <div>
+              <div class="pricing-name">{{p.name || 'Special Price'}}</div>
+              <div class="pricing-dates">{{formatDate(p.startsAt)}} — {{formatDate(p.endsAt)}}</div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="pricing-price">EGP {{p.specialPrice}}</span>
+            <button (click)="removePricingRule(p.id)" class="border-0 bg-transparent p-1"
+                    [disabled]="isDeletingPricing === p.id" style="cursor:pointer;">
+              <span class="material-symbols-outlined" style="font-size:1.1rem; color:var(--error);">
+                {{isDeletingPricing === p.id ? 'hourglass_empty' : 'delete'}}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /!availLoading -->
   </div>
 </div>

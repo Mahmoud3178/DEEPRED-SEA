@@ -1,77 +1,269 @@
 <div class="min-vh-100 d-flex align-items-center justify-content-center p-4 register-page">
   <div class="card-premium p-5 animate-fadeInUp register-card">
 
+    <!-- Header -->
     <div class="text-center mb-4">
-      <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3 register-logo-circle">
-        <span class="material-symbols-outlined text-white register-logo-icon">scuba_diving</span>
-      </div>
+      <img src="/assets/images/logo-dr.png" alt="DiveKemet" class="register-logo-img mb-3">
       <h2 class="register-title">Create Account</h2>
       <p class="register-subtitle">Join Egypt's premier diving platform</p>
+    </div>
+
+    <!-- ✅ Global Error Banner -->
+    <div *ngIf="errorMessage || errorMessages.length > 0"
+         class="error-banner d-flex align-items-start gap-2 mb-4 animate-fadeInUp"
+         role="alert">
+      <span class="material-symbols-outlined error-banner-icon">error</span>
+      <div class="flex-grow-1">
+        <div class="error-banner-title">Please fix the following</div>
+        <!-- رسالة واحدة -->
+        <div class="error-banner-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+        <!-- أكتر من رسالة -->
+        <ul class="error-banner-list mb-0" *ngIf="errorMessages.length > 1">
+          <li *ngFor="let m of errorMessages">{{ m }}</li>
+        </ul>
+      </div>
+      <button (click)="errorMessage=''; errorMessages=[]"
+              class="border-0 bg-transparent ms-auto error-banner-close">
+        <span class="material-symbols-outlined" style="font-size:1rem;">close</span>
+      </button>
     </div>
 
     <!-- Role selector -->
     <div class="row g-2 mb-4">
       <div class="col-6" *ngFor="let r of roles">
-        <button type="button" (click)="form.get('role')?.setValue(r.value)"
+        <button type="button" (click)="setRole(r.value)"
           class="w-100 p-3 border-0 rounded-3 text-start role-card-btn"
           [class.role-card-btn-active]="form.get('role')?.value === r.value"
           [class.role-card-btn-inactive]="form.get('role')?.value !== r.value">
-          <span class="material-symbols-outlined d-block mb-1 role-card-icon">{{r.icon}}</span>
-          <span class="role-card-name">{{r.label}}</span><br>
-          <span class="role-card-desc">{{r.desc}}</span>
+          <span class="material-symbols-outlined d-block mb-1 role-card-icon">{{ r.icon }}</span>
+          <span class="role-card-name">{{ r.label }}</span><br>
+          <span class="role-card-desc">{{ r.desc }}</span>
         </button>
       </div>
     </div>
 
+    <!-- Step Indicator (center only) -->
+    <div class="step-indicator mb-4" *ngIf="isCenter">
+      <div class="step-track">
+        <div *ngFor="let s of [1,2,3]; let i = index" class="step-item">
+          <div class="step-circle" [class.active]="currentStep === s" [class.done]="currentStep > s">
+            <span class="material-symbols-outlined step-check" *ngIf="currentStep > s">check</span>
+            <span *ngIf="currentStep <= s">{{ s }}</span>
+          </div>
+          <div class="step-line" *ngIf="i < 2" [class.done]="currentStep > s"></div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between step-labels mt-1">
+        <span>Basic Info</span>
+        <span>Location</span>
+        <span>Social</span>
+      </div>
+    </div>
+
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <div class="mb-3">
-        <label class="form-label field-label">Full Name</label>
-        <div class="position-relative">
-          <span class="material-symbols-outlined position-absolute input-icon">person</span>
-          <input formControlName="name" type="text" placeholder="Ahmed Mohamed"
-            class="form-control-tonal w-100 ps-5"
-            [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched">
-        </div>
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label field-label">Email</label>
-        <div class="position-relative">
-          <span class="material-symbols-outlined position-absolute input-icon">email</span>
-          <input formControlName="email" type="email" placeholder="your@email.com"
-            class="form-control-tonal w-100 ps-5"
-            [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
-        </div>
-      </div>
+      <!-- ══ STEP 1 ══ -->
+      <ng-container *ngIf="currentStep === 1">
 
-      <div class="mb-4">
-        <label class="form-label field-label">Password</label>
-        <div class="position-relative">
-          <span class="material-symbols-outlined position-absolute input-icon">lock</span>
-          <input formControlName="password" [type]="showPassword ? 'text' : 'password'"
-            placeholder="Min. 6 characters"
-            class="form-control-tonal w-100 ps-5 pe-5"
-            [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
-          <button type="button" (click)="showPassword=!showPassword"
-            class="position-absolute border-0 bg-transparent password-toggle">
-            <span class="material-symbols-outlined password-toggle-icon">
-              {{showPassword ? 'visibility_off' : 'visibility'}}
-            </span>
+        <div class="mb-3" *ngIf="isCenter">
+          <label class="form-label field-label">Center Name</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">storefront</span>
+            <input formControlName="centerName" type="text" placeholder="Blue Ocean Dive Center"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('centerName')?.invalid && f('centerName')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('centerName')?.invalid && f('centerName')?.touched">Center name is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label field-label">{{ isCenter ? 'Owner Name' : 'Full Name' }}</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">person</span>
+            <input formControlName="name" type="text" placeholder="Ahmed Mohamed"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('name')?.invalid && f('name')?.touched">Name is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label field-label">Email</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">email</span>
+            <input formControlName="email" type="email" placeholder="your@email.com"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('email')?.invalid && f('email')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('email')?.invalid && f('email')?.touched">Valid email is required</div>
+        </div>
+
+        <div class="mb-3" *ngIf="isCenter">
+          <label class="form-label field-label">Phone Number</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">phone</span>
+            <input formControlName="phone" type="tel" placeholder="+20 100 000 0000"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('phone')?.invalid && f('phone')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('phone')?.invalid && f('phone')?.touched">Phone number is required</div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label field-label">Password</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">lock</span>
+            <input formControlName="password" [type]="showPassword ? 'text' : 'password'"
+              placeholder="Min. 6 characters"
+              class="form-control-tonal w-100 ps-5 pe-5"
+              [class.is-invalid]="f('password')?.invalid && f('password')?.touched">
+            <button type="button" (click)="showPassword=!showPassword"
+              class="position-absolute border-0 bg-transparent password-toggle">
+              <span class="material-symbols-outlined password-toggle-icon">
+                {{ showPassword ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+          <div class="field-error" *ngIf="f('password')?.invalid && f('password')?.touched">Min. 6 characters</div>
+        </div>
+
+        <button type="button" *ngIf="isCenter" (click)="nextStep()"
+          class="btn-primary-gradient w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+          Next <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+
+        <button type="submit" *ngIf="!isCenter" [disabled]="loading"
+          class="btn-primary-gradient w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+          <span class="material-symbols-outlined submit-icon" *ngIf="!loading">how_to_reg</span>
+          {{ loading ? 'Creating...' : 'Create Account' }}
+        </button>
+
+      </ng-container>
+
+      <!-- ══ STEP 2 ══ -->
+      <ng-container *ngIf="currentStep === 2">
+
+        <div class="mb-3">
+          <label class="form-label field-label">Governorate</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">map</span>
+            <select formControlName="governorate"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('governorate')?.invalid && f('governorate')?.touched">
+              <option value="" disabled selected>Select governorate</option>
+              <option *ngFor="let g of governorates" [value]="g">{{ g }}</option>
+            </select>
+          </div>
+          <div class="field-error" *ngIf="f('governorate')?.invalid && f('governorate')?.touched">Governorate is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label field-label">City</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">location_city</span>
+            <input formControlName="city" type="text" placeholder="Sharm El Sheikh"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('city')?.invalid && f('city')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('city')?.invalid && f('city')?.touched">City is required</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label field-label">Address</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">home</span>
+            <input formControlName="address" type="text" placeholder="123 Reef Street"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('address')?.invalid && f('address')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('address')?.invalid && f('address')?.touched">Address is required</div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label field-label">Location <span class="text-muted fw-normal">(Google Maps link)</span></label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">pin_drop</span>
+            <input formControlName="location" type="url" placeholder="https://maps.google.com/..."
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="f('location')?.invalid && f('location')?.touched">
+          </div>
+          <div class="field-error" *ngIf="f('location')?.invalid && f('location')?.touched">Valid location link is required</div>
+        </div>
+
+        <div class="d-flex gap-3">
+          <button type="button" (click)="prevStep()"
+            class="btn-secondary-tonal flex-fill py-3 d-flex align-items-center justify-content-center gap-2">
+            <span class="material-symbols-outlined">arrow_back</span> Back
+          </button>
+          <button type="button" (click)="nextStep()"
+            class="btn-primary-gradient flex-fill py-3 d-flex align-items-center justify-content-center gap-2">
+            Next <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
-      </div>
 
-      <button type="submit" [disabled]="loading"
-        class="btn-primary-gradient w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
-        <span class="material-symbols-outlined submit-icon" *ngIf="!loading">how_to_reg</span>
-        {{ loading ? 'Creating...' : 'Create Account' }}
-      </button>
+      </ng-container>
+
+      <!-- ══ STEP 3 ══ -->
+      <ng-container *ngIf="currentStep === 3">
+
+        <p class="social-hint mb-4">
+          <span class="material-symbols-outlined social-hint-icon">info</span>
+          At least one link is required (Facebook, Instagram, or Website)
+        </p>
+
+        <div class="mb-3">
+          <label class="form-label field-label">Facebook Page</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">group</span>
+            <input formControlName="facebook" type="url" placeholder="https://facebook.com/yourcenter"
+              class="form-control-tonal w-100 ps-5">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label field-label">Instagram</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">photo_camera</span>
+            <input formControlName="instagram" type="url" placeholder="https://instagram.com/yourcenter"
+              class="form-control-tonal w-100 ps-5">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label field-label">Website</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">language</span>
+            <input formControlName="website" type="url" placeholder="https://yourwebsite.com"
+              class="form-control-tonal w-100 ps-5">
+          </div>
+        </div>
+
+        <div class="field-error mb-3" *ngIf="socialError">
+          <span class="material-symbols-outlined" style="font-size:.9rem;vertical-align:middle;">error</span>
+          At least one social link is required
+        </div>
+
+        <div class="d-flex gap-3">
+          <button type="button" (click)="prevStep()"
+            class="btn-secondary-tonal flex-fill py-3 d-flex align-items-center justify-content-center gap-2">
+            <span class="material-symbols-outlined">arrow_back</span> Back
+          </button>
+          <button type="submit" [disabled]="loading"
+            class="btn-primary-gradient flex-fill py-3 d-flex align-items-center justify-content-center gap-2">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+            <span class="material-symbols-outlined" *ngIf="!loading">how_to_reg</span>
+            {{ loading ? 'Creating...' : 'Create Account' }}
+          </button>
+        </div>
+
+      </ng-container>
 
       <p class="text-center mt-3 form-footer">
         Already have an account?
         <a routerLink="/auth/login" class="form-link">Sign in</a>
       </p>
+
     </form>
   </div>
 </div>

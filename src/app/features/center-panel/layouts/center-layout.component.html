@@ -6,27 +6,42 @@
 <aside class="sidebar" [class.open]="sidebarOpen">
   <div class="p-4 pb-3" style="border-bottom:1px solid var(--surface-container-high);">
     <div class="d-flex align-items-center gap-3">
-      <div class="rounded-3 d-flex align-items-center justify-content-center sidebar-logo-box">
-        <span class="material-symbols-outlined text-white sidebar-logo-icon">storefront</span>
+
+      <!-- صورة الـ center أو الـ placeholder -->
+      <div class="sidebar-logo-box rounded-3 flex-shrink-0">
+        <img *ngIf="centerImageUrl"
+             [src]="centerImageUrl"
+             class="sidebar-logo-img"
+             alt="Center logo">
+        <span *ngIf="!centerImageUrl"
+              class="material-symbols-outlined text-white sidebar-logo-icon">storefront</span>
       </div>
-      <div>
-        <div class="sidebar-center-name">{{auth.currentUser?.name}}</div>
+
+      <div class="overflow-hidden">
+        <div class="sidebar-center-name text-truncate">
+          {{ centerName || auth.currentUser?.name }}
+        </div>
         <div class="sidebar-center-sub">Dive Center Panel</div>
       </div>
+
     </div>
   </div>
 
   <nav class="px-3 flex-grow-1 py-2">
     <div class="sidebar-section-label">Main Menu</div>
-    <a *ngFor="let link of navLinks" [routerLink]="link.route" routerLinkActive="active"
-       class="sidebar-link mb-1" (click)="sidebarOpen=false">
+    <a *ngFor="let link of navLinks"
+       [routerLink]="link.route"
+       routerLinkActive="active"
+       class="sidebar-link mb-1"
+       (click)="sidebarOpen=false">
       <span class="material-symbols-outlined" style="font-size:1.15rem;">{{link.icon}}</span>
       {{link.label}}
     </a>
   </nav>
 
   <div class="px-3 pb-4 mt-auto">
-    <button (click)="logout()" class="sidebar-link w-100 border-0 bg-transparent text-start sidebar-logout">
+    <button (click)="logout()"
+            class="sidebar-link w-100 border-0 bg-transparent text-start sidebar-logout">
       <span class="material-symbols-outlined" style="font-size:1.15rem;">logout</span>
       Logout
     </button>
@@ -36,20 +51,32 @@
 <!-- Main Content -->
 <div class="main-content">
   <header class="glass-nav d-flex align-items-center justify-content-between px-4 py-3 topbar">
+
     <button class="d-lg-none border-0 bg-transparent p-1" (click)="sidebarOpen=!sidebarOpen">
       <span class="material-symbols-outlined">menu</span>
     </button>
+
     <div class="d-none d-lg-block">
       <span class="topbar-title">Center Management</span>
     </div>
+
     <div class="d-flex align-items-center gap-3 ms-auto">
+
+      <!-- Notification bell (static لحد ما يتربط) -->
       <button class="border-0 bg-transparent p-1 position-relative notif-btn">
         <span class="material-symbols-outlined" style="color:var(--on-surface-variant);">notifications</span>
-        <span class="position-absolute top-0 end-0 rounded-circle notif-dot"></span>
       </button>
-      <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold topbar-avatar">
-        {{auth.currentUser?.name?.charAt(0)?.toUpperCase()}}
+
+      <!-- Topbar avatar: صورة الـ center أو أول حرف -->
+      <div class="topbar-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold overflow-hidden">
+        <img *ngIf="centerImageUrl"
+             [src]="centerImageUrl"
+             class="w-100 h-100"
+             style="object-fit:cover;"
+             alt="">
+        <span *ngIf="!centerImageUrl">{{ centerInitial }}</span>
       </div>
+
     </div>
   </header>
 

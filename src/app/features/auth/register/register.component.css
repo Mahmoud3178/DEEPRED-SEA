@@ -6,18 +6,15 @@
 /* ── Card ── */
 .register-card {
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   border-radius: 2rem;
 }
 
-/* ── Logo circle ── */
-.register-logo-circle {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #005d90, #0077b6);
+.register-logo-img {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
 }
-
-.register-logo-icon { font-size: 2rem; }
 
 /* ── Headings ── */
 .register-title {
@@ -26,25 +23,83 @@
   font-weight: 800;
   color: var(--on-surface);
 }
-
 .register-subtitle { color: var(--on-surface-variant); }
 
 /* ── Role buttons ── */
-.role-card-btn {
-  transition: all 0.25s;
-  cursor: pointer;
+.role-card-btn { transition: all 0.25s; cursor: pointer; }
+.role-card-btn-active  { background: linear-gradient(135deg, #005d90, #0077b6); color: #fff; }
+.role-card-btn-inactive { background: var(--surface-container-low); color: var(--on-surface); }
+.role-card-icon { font-size: 1.5rem; }
+.role-card-name { font-weight: 700; font-size: 0.9rem; }
+.role-card-desc { font-size: 0.75rem; opacity: 0.75; }
+
+/* ── Step indicator ── */
+.step-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
 }
-.role-card-btn-active {
+.step-item {
+  display: flex;
+  align-items: center;
+}
+.step-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.step-circle.active {
   background: linear-gradient(135deg, #005d90, #0077b6);
   color: #fff;
+  box-shadow: 0 0 0 4px rgba(0, 93, 144, 0.2);
 }
-.role-card-btn-inactive {
-  background: var(--surface-container-low);
-  color: var(--on-surface);
+.step-circle.done {
+  background: #0077b6;
+  color: #fff;
 }
-.role-card-icon { font-size: 1.5rem; }
-.role-card-name  { font-weight: 700; font-size: 0.9rem; }
-.role-card-desc  { font-size: 0.75rem; opacity: 0.75; }
+.step-check { font-size: 1rem; }
+.step-line {
+  height: 2px;
+  width: 60px;
+  background: var(--surface-container-high);
+  transition: background 0.3s;
+}
+.step-line.done { background: #0077b6; }
+.step-labels {
+  font-size: 0.72rem;
+  color: var(--on-surface-variant);
+  padding: 0 4px;
+}
+
+/* ── Field error ── */
+.field-error {
+  color: var(--error);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Social hint ── */
+.social-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 93, 144, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: var(--primary);
+}
+.social-hint-icon { font-size: 1rem; }
 
 /* ── Labels ── */
 .field-label {
@@ -60,6 +115,13 @@
   transform: translateY(-50%);
   color: var(--outline);
   font-size: 1.1rem;
+  z-index: 1;
+}
+
+/* ── Select styling ── */
+select.form-control-tonal {
+  appearance: none;
+  cursor: pointer;
 }
 
 .password-toggle {
@@ -77,3 +139,45 @@
 /* ── Footer ── */
 .form-footer { color: var(--on-surface-variant); font-size: 0.875rem; }
 .form-link { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+/* ── Error Banner ── */
+.error-banner {
+  background: rgba(186, 26, 26, .08);
+  border: 1.5px solid rgba(186, 26, 26, .25);
+  border-radius: 12px;
+  padding: .875rem 1rem;
+  color: #ba1a1a;
+}
+.error-banner-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.error-banner-title {
+  font-weight: 700;
+  font-size: .875rem;
+  margin-bottom: 2px;
+}
+.error-banner-msg {
+  font-size: .82rem;
+  opacity: .85;
+  line-height: 1.5;
+}
+.error-banner-list {
+  padding-left: 1.1rem;
+  margin-top: 4px;
+}
+.error-banner-list li {
+  font-size: .82rem;
+  opacity: .9;
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+.error-banner-close {
+  color: #ba1a1a;
+  opacity: .6;
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
+}
+.error-banner-close:hover { opacity: 1; }

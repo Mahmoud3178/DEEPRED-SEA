@@ -16,3 +16,20 @@
 .preview-star   { font-size:.9rem; color:#f59e0b; font-variation-settings:'FILL' 1; }
 .preview-rating { font-weight:700; }
 .preview-reviews{ color:var(--on-surface-variant); font-size:.8rem; }
+
+
+/* Profile image uploader */
+.profile-img-wrapper   { position: relative; flex-shrink: 0; }
+.profile-img-circle    { width: 96px; height: 96px; border-radius: 50%; object-fit: cover;
+                         border: 3px solid var(--outline-variant); display: block; }
+.profile-img-placeholder { width: 96px; height: 96px; background: var(--surface-variant); border: 2px dashed var(--outline); }
+.img-pending-badge     { position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+                         background: #f59e0b; color: #fff; font-size: .65rem; font-weight: 700;
+                         padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+                         display: flex; align-items: center; gap: 3px; }
+.btn-outline-tonal     { background: var(--surface-variant); border: 1px solid var(--outline);
+                         color: var(--on-surface); border-radius: .75rem; padding: .5rem 1.25rem;
+                         font-weight: 600; font-size: .85rem; cursor: pointer; transition: .2s; }
+.btn-outline-tonal:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-outline-tonal:disabled { opacity: .5; cursor: not-allowed; }
+.field-hint            { font-size: .75rem; color: var(--on-surface-variant); margin: 0; }

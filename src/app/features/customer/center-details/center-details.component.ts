@@ -28,10 +28,10 @@ export class CenterDetailsComponent implements OnInit {
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',
     ],
     reviewsList: [
-      { name: 'Sarah M.', rating: 5, date: 'Dec 2024', text: 'Absolutely incredible experience! The instructors were professional and the sites were breathtaking.' },
-      { name: 'James K.', rating: 5, date: 'Nov 2024', text: 'Best dive center in Sharm by far. The Thistlegorm wreck trip was the highlight of my trip.' },
-      { name: 'Lena P.', rating: 4, date: 'Oct 2024', text: 'Great organization, beautiful sites. Would highly recommend to beginners and experienced divers alike.' },
-    ]
+  { name: 'Sarah M.', rating: 5, date: 'Dec 2024', text: 'Absolutely incredible experience! The instructors were professional and the sites were breathtaking.', reply: 'Thank you Sarah! It was a pleasure diving with you. Hope to see you again soon! 🤿' },
+  { name: 'James K.', rating: 5, date: 'Nov 2024', text: 'Best dive center in Sharm by far. The Thistlegorm wreck trip was the highlight of my trip.', reply: 'Thanks James! The Thistlegorm is always special. You\'re welcome back anytime!' },
+  { name: 'Lena P.', rating: 4, date: 'Oct 2024', text: 'Great organization, beautiful sites. Would highly recommend to beginners and experienced divers alike.', reply: '' },
+]
   };
 
   constructor(private route: ActivatedRoute, private router: Router) {}

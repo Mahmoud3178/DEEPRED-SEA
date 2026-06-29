@@ -12,7 +12,7 @@ import { BookingComponent } from './booking/booking.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ContactComponent } from './contact/contact.component';
 import { AboutComponent } from './about/about.component';
-import { LiveaboardsComponent } from './liveaboards/liveaboards.component';
+
 
 const routes: Routes = [
   {
@@ -24,7 +24,7 @@ const routes: Routes = [
       { path: 'centers/:id', component: CenterDetailsComponent },
       { path: 'booking/:centerId', component: BookingComponent, canActivate: [AuthGuard] },
       { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-      { path: 'liveaboards', component: LiveaboardsComponent },
+
       { path: 'about', component: AboutComponent },
       { path: 'contact', component: ContactComponent },
     ]
@@ -34,7 +34,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [
     CustomerLayoutComponent, HomeComponent, CentersComponent,
-    CenterDetailsComponent, BookingComponent, ProfileComponent, ContactComponent, AboutComponent, LiveaboardsComponent
+    CenterDetailsComponent, BookingComponent, ProfileComponent, ContactComponent, AboutComponent
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule.forChild(routes)],
 })

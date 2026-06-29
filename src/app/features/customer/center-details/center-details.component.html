@@ -138,6 +138,19 @@
                 </div>
               </div>
               <p class="review-text">{{review.text}}</p>
+              <!-- Center Reply -->
+              <div *ngIf="review.reply" class="d-flex align-items-start gap-2 mt-3 p-3 rounded-3"
+                style="background:rgba(0,93,144,0.05); border-left: 3px solid var(--primary);">
+                <span class="material-symbols-outlined mt-1" style="color:var(--primary); font-size:1rem;">reply</span>
+                <div>
+                  <div style="font-size:.72rem; font-weight:700; color:var(--primary); font-family:'Inter',sans-serif; margin-bottom:.25rem;">
+                    CENTER REPLY
+                  </div>
+                  <p style="font-size:.85rem; color:var(--on-surface-variant); margin:0; line-height:1.6;">
+                    {{review.reply}}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

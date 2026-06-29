@@ -25,13 +25,19 @@
   pointer-events: none;
 }
 
-.brand-icon { color: #50d9fe; font-size: 2rem; }
+/* ── Login brand logos ── */
+.login-brand-logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* أبيض عشان الخلفية داكنة */
+}
 
-.brand-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.4rem;
-  color: #fff;
-  letter-spacing: -0.5px;
+.login-brand-logo-mobile {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  /* بدون filter عشان الخلفية فاتحة */
 }
 
 .brand-tagline {
@@ -158,11 +164,3 @@
 /* ── Footer link ── */
 .form-footer { color: var(--on-surface-variant); font-size: 0.875rem; }
 .form-link { color: var(--primary); font-weight: 700; text-decoration: none; }
-
-/* ── Mobile logo ── */
-.mobile-logo-icon { color: var(--primary); font-size: 2rem; }
-.mobile-logo-name {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 1.4rem;
-  color: var(--primary);
-}
