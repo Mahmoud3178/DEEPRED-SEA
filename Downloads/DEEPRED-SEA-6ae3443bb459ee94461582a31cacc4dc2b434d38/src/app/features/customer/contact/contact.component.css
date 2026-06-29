@@ -1,0 +1,200 @@
+/* ── Hero ── */
+.contact-hero {
+  position: relative;
+  height: 90vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.contact-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.05);
+  animation: heroFadeIn 1.4s ease-out both;
+  transition: transform 8s ease-out;
+}
+
+.contact-hero:hover .contact-hero-bg {
+  transform: scale(1);
+}
+
+.contact-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15) 0%,
+    rgba(0,0,0,0.1) 40%,
+    rgba(0,10,30,0.75) 75%,
+    rgba(0,10,30,0.95) 100%
+  );
+}
+
+.contact-hero-content {
+  position: relative;
+  padding-bottom: 5rem;
+}
+
+.contact-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #01BFFC;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid rgba(1,191,252,0.4);
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  animation: heroFadeUp 0.8s ease-out 0.2s both;
+}
+
+.contact-hero-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  animation: heroFadeUp 0.9s ease-out 0.45s both;
+}
+
+.contact-title-accent { color: #01BFFC; }
+
+/* ── Content ── */
+.contact-content {
+  padding: 5rem 0 6rem;
+  background: var(--background);
+}
+
+/* Info Cards */
+.contact-info-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface-container-lowest);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, border-color 0.3s;
+}
+.contact-info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,29,50,0.1);
+  border-color: rgba(1,191,252,0.3);
+}
+.contact-info-card--dark {
+  background: #001a3a;
+  border-color: transparent;
+}
+
+.contact-info-icon {
+  width: 46px; height: 46px; min-width: 46px;
+  background: rgba(0,93,144,0.08);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.contact-info-icon .material-symbols-outlined { color: var(--primary); font-size: 1.3rem; }
+.contact-info-icon--light { background: rgba(1,191,252,0.12); }
+.contact-info-icon--light .material-symbols-outlined { color: #01BFFC; }
+
+.contact-info-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'Inter', sans-serif;
+}
+.contact-info-label--light { color: rgba(255,255,255,0.5); }
+
+.contact-info-value {
+  font-weight: 700;
+  color: var(--on-surface);
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+.contact-devlink { color: #01BFFC; text-decoration: none; font-weight: 700; font-size: 0.95rem; }
+.contact-devlink:hover { text-decoration: underline; }
+
+/* Form Card */
+.contact-form-card {
+  background: var(--surface-container-lowest);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: 1.5rem;
+  padding: 2.5rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.contact-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(to right, #002F7A, #01BFFC);
+}
+
+.contact-form-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #01BFFC;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.5rem;
+}
+
+.contact-form-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  color: var(--on-surface);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.contact-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  font-family: 'Inter', sans-serif;
+}
+
+.contact-textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.brand-base { color: #01BFFC; }
+
+/* ── Animations ── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes heroFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.contact-block--anim {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.contact-block--delay {
+  transition-delay: 0.15s;
+}
+.contact-block--anim.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .contact-form-card { padding: 1.75rem; }
+  .contact-hero { height: 70vh; }
+}

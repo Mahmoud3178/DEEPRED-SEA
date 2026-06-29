@@ -1,0 +1,166 @@
+/* ── Wrapper ── */
+.login-wrapper {
+  background: #0a1628;
+}
+
+/* ── Left branding panel ── */
+.login-brand-panel {
+  width: 50%;
+  background: linear-gradient(160deg, #001d32 0%, #003d6b 50%, #005d90 100%);
+}
+
+.brand-circle-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,119,182,0.3), transparent);
+  border-radius: 50%;
+  top: -100px; right: -100px;
+  pointer-events: none;
+}
+
+.brand-circle-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(80,217,254,0.15), transparent);
+  border-radius: 50%;
+  bottom: 50px; left: 50px;
+  pointer-events: none;
+}
+
+/* ── Login brand logos ── */
+.login-brand-logo {
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* أبيض عشان الخلفية داكنة */
+}
+
+.login-brand-logo-mobile {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  /* بدون filter عشان الخلفية فاتحة */
+}
+
+.brand-tagline {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+.brand-headline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.brand-headline-accent {
+  background: linear-gradient(135deg, #50d9fe, #0077b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-desc {
+  color: rgba(255,255,255,0.65);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 380px;
+}
+
+.brand-stat-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #50d9fe;
+}
+
+.brand-stat-label {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+}
+
+.brand-copy {
+  color: rgba(255,255,255,0.3);
+  font-size: 0.75rem;
+}
+
+/* ── Right form panel ── */
+.login-form-panel { background: #fbf9f8; }
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.form-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.form-subtitle {
+  color: var(--on-surface-variant);
+  margin-bottom: 2rem;
+}
+
+/* ── Role selector buttons ── */
+.role-btn {
+  font-size: 0.82rem;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.role-btn-active {
+  background: linear-gradient(135deg, #005d90, #0077b6);
+  color: #fff;
+  font-weight: 700;
+}
+.role-btn-inactive {
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  font-weight: 500;
+}
+
+/* ── Input icons ── */
+.input-icon {
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--outline);
+  font-size: 1.1rem;
+}
+
+.password-toggle {
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--outline);
+}
+
+.password-toggle-icon { font-size: 1.1rem; }
+
+/* ── Labels ── */
+.field-label {
+  color: var(--on-surface);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ── Error alert ── */
+.login-error {
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  border: none;
+  background: var(--error-container);
+  color: var(--error);
+}
+.login-error-icon { font-size: 1rem; vertical-align: middle; }
+
+/* ── Submit icon ── */
+.submit-icon { font-size: 1.1rem; }
+
+/* ── Footer link ── */
+.form-footer { color: var(--on-surface-variant); font-size: 0.875rem; }
+.form-link { color: var(--primary); font-weight: 700; text-decoration: none; }

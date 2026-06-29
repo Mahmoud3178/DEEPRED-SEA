@@ -1,0 +1,180 @@
+<div class="animate-fadeInUp">
+  <div class="mb-4">
+    <h2 class="page-title">Reviews</h2>
+    <p class="page-subtitle">Manage your reputation</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+      <div class="card-premium p-4 text-center">
+        <div class="avg-rating-val">{{avgRating}}</div>
+        <div class="d-flex justify-content-center gap-1 my-2">
+          <span class="material-symbols-outlined avg-star">star</span>
+          <span class="material-symbols-outlined avg-star">star</span>
+          <span class="material-symbols-outlined avg-star">star</span>
+          <span class="material-symbols-outlined avg-star">star</span>
+          <span class="material-symbols-outlined avg-star">star</span>
+        </div>
+        <div class="avg-label">Average Rating</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="card-premium p-4 text-center">
+        <div class="stat-big-val">{{totalCount}}</div>
+        <div class="stat-big-label">Total Reviews</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="card-premium p-4 text-center">
+        <div class="stat-big-val">{{goodReviewsCount}}</div>
+        <div class="stat-big-label">4★ / 5★ Reviews</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <button *ngFor="let f of filters"
+      (click)="setFilter(f)"
+      [class]="activeFilter === f ? 'btn-primary-gradient px-4 py-2' : 'btn-secondary-tonal px-4 py-2'"
+      style="font-size:.85rem;">
+      {{f}}
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border"></div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && reviews.length === 0" class="text-center py-5 text-muted">
+    No reviews found.
+  </div>
+
+  <!-- Reviews List -->
+  <div class="d-flex flex-column gap-4">
+    <div *ngFor="let r of reviews" class="card-premium p-4">
+      <div class="d-flex align-items-start gap-3">
+
+        <!-- Avatar -->
+        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar">
+          {{r.avatar}}
+        </div>
+
+        <div class="flex-grow-1">
+
+          <!-- Header -->
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
+            <div>
+              <span class="reviewer-name">{{r.diver}}</span>
+              <span class="reviewer-meta">· {{r.trip}} · {{r.date}}</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="d-flex gap-0">
+                <span *ngFor="let s of r.starsList"
+                      class="material-symbols-outlined review-star"
+                      [style.color]="s ? '#f59e0b' : 'var(--surface-container-high)'">star</span>
+              </div>
+              <span [ngClass]="{
+                'badge-active':  r.status === 'Approved',
+                'badge-pending': r.status === 'Pending',
+                'badge-blocked': r.status === 'Rejected'
+              }">{{r.status}}</span>
+            </div>
+          </div>
+
+          <!-- Review text -->
+          <p class="review-text">{{r.text}}</p>
+
+          <!-- Existing reply -->
+          <div *ngIf="r.reply" class="reply-box rounded-3 p-3 mb-3">
+            <div class="d-flex align-items-center gap-1 mb-1">
+              <span class="material-symbols-outlined reply-box-icon">storefront</span>
+              <span class="reply-box-label">Your reply</span>
+              <span *ngIf="r.replyDate" class="reviewer-meta ms-1">· {{r.replyDate}}</span>
+            </div>
+            <p class="reply-box-text">{{r.reply}}</p>
+          </div>
+
+          <!-- Approve / Reject -->
+          <div *ngIf="r.status === 'Pending'" class="d-flex gap-2 mt-2">
+            <button (click)="updateStatus(r.id, 'Approved')"
+              class="btn-primary-gradient px-3 py-1 d-flex align-items-center gap-1"
+              style="font-size:.82rem;">
+              <span class="material-symbols-outlined" style="font-size:.9rem;">check</span> Approve
+            </button>
+            <button (click)="updateStatus(r.id, 'Rejected')"
+              class="border-0 px-3 py-1 rounded-2 d-flex align-items-center gap-1 action-reject"
+              style="font-size:.82rem;">
+              <span class="material-symbols-outlined" style="font-size:.9rem;">close</span> Reject
+            </button>
+          </div>
+
+          <!-- Reply button (لو مفيش reply موجود) -->
+          <button *ngIf="!r.reply && replyingId !== r.id"
+                  (click)="openReply(r.id)"
+                  class="d-flex align-items-center gap-1 border-0 bg-transparent mt-2 reply-btn">
+            <span class="material-symbols-outlined reply-btn-icon">reply</span> Reply
+          </button>
+
+          <!-- Reply input box -->
+          <div *ngIf="replyingId === r.id" class="animate-fadeInUp mt-3">
+
+            <textarea [(ngModel)]="replyText"
+                      rows="3"
+                      placeholder="Write a professional reply..."
+                      class="form-control-tonal w-100 mb-2"
+                      style="resize:none;"
+                      [disabled]="replyLoading">
+            </textarea>
+
+            <!-- Reply error -->
+            <div *ngIf="replyError" class="text-danger small mb-2">
+              <span class="material-symbols-outlined" style="font-size:.9rem;vertical-align:middle;">error</span>
+              {{replyError}}
+            </div>
+
+            <div class="d-flex gap-2">
+              <button (click)="submitReply()"
+                      [disabled]="replyLoading || !replyText.trim()"
+                      class="btn-primary-gradient px-4 py-2 d-flex align-items-center gap-1"
+                      style="font-size:.85rem;">
+                <span *ngIf="!replyLoading" class="material-symbols-outlined reply-send-icon">send</span>
+                <span *ngIf="replyLoading"  class="spinner-border spinner-border-sm" role="status"></span>
+                {{ replyLoading ? 'Sending…' : 'Send Reply' }}
+              </button>
+              <button (click)="cancelReply()"
+                      [disabled]="replyLoading"
+                      class="btn-secondary-tonal px-4 py-2"
+                      style="font-size:.85rem;">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1"
+       class="d-flex justify-content-center align-items-center gap-3 mt-4">
+    <button (click)="prevPage()" [disabled]="page === 1"
+      class="btn-secondary-tonal px-4 py-2" style="font-size:.85rem;">
+      Previous
+    </button>
+    <span style="font-size:.9rem; color:var(--text-muted);">
+      Page {{page}} of {{totalPages}}
+    </span>
+    <button (click)="nextPage()" [disabled]="page === totalPages"
+      class="btn-primary-gradient px-4 py-2" style="font-size:.85rem;">
+      Next
+    </button>
+  </div>
+</div>

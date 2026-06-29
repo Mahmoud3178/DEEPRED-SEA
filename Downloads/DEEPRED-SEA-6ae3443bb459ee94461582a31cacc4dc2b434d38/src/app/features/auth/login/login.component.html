@@ -1,0 +1,103 @@
+<div class="min-vh-100 d-flex login-wrapper">
+
+  <!-- Left: Branding Panel -->
+  <div class="d-none d-lg-flex flex-column justify-content-between p-5 position-relative overflow-hidden login-brand-panel">
+    <div class="position-absolute brand-circle-1"></div>
+    <div class="position-absolute brand-circle-2"></div>
+
+    <div class="position-relative z-1">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <img src="assets/images/hero.png" alt="DiveKemet" class="login-brand-logo">
+      </div>
+      <p class="brand-tagline">EGYPT'S PREMIER DIVE PLATFORM</p>
+    </div>
+
+    <div class="position-relative z-1">
+      <h1 class="brand-headline">
+        Discover Egypt's<br>
+        <span class="brand-headline-accent">Hidden Depths</span>
+      </h1>
+      <p class="brand-desc">
+        From Sharm El Sheikh's legendary reefs to Dahab's Blue Hole — your next dive adventure starts here.
+      </p>
+      <div class="d-flex gap-4 mt-4">
+        <div><div class="brand-stat-value">150+</div><div class="brand-stat-label">Dive Centers</div></div>
+        <div><div class="brand-stat-value">50k+</div><div class="brand-stat-label">Divers</div></div>
+        <div><div class="brand-stat-value">4.9★</div><div class="brand-stat-label">Avg Rating</div></div>
+      </div>
+    </div>
+
+    <p class="brand-copy position-relative z-1">© 2025 DiveKemet — All rights reserved</p>
+  </div>
+
+  <!-- Right: Login Form -->
+  <div class="flex-grow-1 d-flex align-items-center justify-content-center p-4 login-form-panel">
+    <div class="login-form-wrapper animate-fadeInUp">
+
+      <!-- Mobile logo -->
+      <div class="d-flex d-lg-none align-items-center gap-2 mb-4">
+        <img src="assets/images/hero.png" alt="DiveKemet" class="login-brand-logo-mobile">
+      </div>
+
+      <h2 class="form-title">Welcome back</h2>
+      <p class="form-subtitle">Sign in to continue your dive journey</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label field-label">Email address</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">email</span>
+            <input formControlName="email" type="email" placeholder="your@email.com"
+              class="form-control-tonal w-100 ps-5"
+              [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched">
+          </div>
+          <div class="text-danger mt-1" style="font-size:0.75rem;"
+               *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            Please enter a valid email
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+          <label class="form-label field-label">Password</label>
+          <div class="position-relative">
+            <span class="material-symbols-outlined position-absolute input-icon">lock</span>
+            <input formControlName="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"
+              class="form-control-tonal w-100 ps-5 pe-5"
+              [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
+            <button type="button" (click)="showPassword=!showPassword"
+              class="position-absolute border-0 bg-transparent password-toggle">
+              <span class="material-symbols-outlined password-toggle-icon">{{showPassword ? 'visibility_off' : 'visibility'}}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error" class="alert login-error py-2 mb-3">
+          <span class="material-symbols-outlined login-error-icon me-1">error</span>{{error}}
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" [disabled]="loading"
+          class="btn-primary-gradient w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+          <span class="material-symbols-outlined submit-icon" *ngIf="!loading">login</span>
+          {{ loading ? 'Signing in...' : 'Sign In' }}
+        </button>
+
+   <div class="d-flex justify-content-end mb-3">
+          <a routerLink="/auth/forgot-password"
+             style="color:var(--primary);font-size:.83rem;font-weight:600;text-decoration:none;">
+            Forgot password?
+          </a>
+        </div>
+
+        <p class="text-center mt-3 form-footer">
+          Don't have an account?
+          <a routerLink="/auth/register" class="form-link">Sign up free</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<!-- Mobile overlay -->
+<div *ngIf="sidebarOpen" class="d-lg-none position-fixed mobile-overlay" (click)="sidebarOpen=false"></div>
+
+<!-- Dark Sidebar -->
+<aside class="sidebar admin-sidebar" [class.open]="sidebarOpen">
+  <div class="p-4 pb-3 admin-logo-border">
+    <div class="d-flex align-items-center gap-2">
+      <div class="rounded-3 d-flex align-items-center justify-content-center admin-logo-box">
+        <span class="material-symbols-outlined text-white admin-logo-icon">scuba_diving</span>
+      </div>
+      <div>
+        <div class="admin-brand">DEEPRED SEA</div>
+        <div class="admin-brand-sub">Admin Console</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="px-3 py-4 flex-grow-1">
+    <div class="admin-section-label">Navigation</div>
+    <a *ngFor="let link of navLinks" [routerLink]="link.route" routerLinkActive="admin-active"
+       class="admin-nav-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 mb-1"
+       (click)="sidebarOpen=false">
+      <span class="material-symbols-outlined admin-nav-icon">{{link.icon}}</span>
+      <span class="admin-nav-text">{{link.label}}</span>
+    </a>
+  </nav>
+
+  <div class="px-3 pb-4 mt-auto admin-user-border">
+    <div class="d-flex align-items-center gap-3 mb-3 px-2">
+      <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold admin-user-avatar">
+        {{auth.currentUser?.name?.charAt(0)?.toUpperCase()}}
+      </div>
+      <div>
+        <div class="admin-user-name">{{auth.currentUser?.name}}</div>
+        <div class="admin-user-role">Super Admin</div>
+      </div>
+    </div>
+    <button (click)="logout()"
+      class="admin-nav-link admin-logout-btn d-flex align-items-center gap-3 px-3 py-2 rounded-3 w-100 border-0 text-start bg-transparent">
+      <span class="material-symbols-outlined admin-nav-icon">logout</span>
+      <span class="admin-nav-text">Logout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+  <header class="d-flex align-items-center justify-content-between px-4 py-3 admin-topbar">
+    <button class="d-lg-none border-0 bg-transparent p-1" (click)="sidebarOpen=!sidebarOpen">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <span class="material-symbols-outlined admin-topbar-icon">admin_panel_settings</span>
+      <span class="admin-topbar-title">Admin Console</span>
+    </div>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <button class="border-0 bg-transparent p-1 position-relative">
+        <span class="material-symbols-outlined" style="color:var(--on-surface-variant);">notifications</span>
+        <span class="position-absolute top-0 end-0 rounded-circle notif-dot"></span>
+      </button>
+      <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold topbar-avatar">
+        {{auth.currentUser?.name?.charAt(0)?.toUpperCase()}}
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,16 @@
+
+.page-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.25rem; }
+.page-subtitle { color:var(--on-surface-variant); margin:0; }
+.search-icon   { left:12px; top:50%; transform:translateY(-50%); color:var(--outline); font-size:1.1rem; }
+.tab-active    { background:linear-gradient(135deg,#005d90,#0077b6); color:#fff; font-weight:700; }
+.tab-inactive  { background:var(--surface-container); color:var(--on-surface-variant); font-weight:500; }
+.filter-tab    { font-size:.82rem; cursor:pointer; transition:all .2s; }
+.user-avatar   { width:34px; height:34px; background:linear-gradient(135deg,rgba(0,93,144,.15),rgba(80,217,254,.15)); color:var(--primary); font-size:.8rem; flex-shrink:0; }
+.user-name     { font-weight:600; font-size:.875rem; color:var(--on-surface); }
+.email-cell    { font-size:.83rem; color:var(--on-surface-variant); }
+.dives-cell    { font-weight:600; text-align:center; }
+.joined-cell   { font-size:.82rem; color:var(--on-surface-variant); }
+.action-block  { background:rgba(186,26,26,.1);  color:var(--error);     cursor:pointer; }
+.action-unblock{ background:rgba(0,103,125,.1);  color:var(--secondary); cursor:pointer; }
+.action-delete { background:rgba(186,26,26,.06); color:var(--error);     cursor:pointer; }
+.action-icon   { font-size:1rem; }

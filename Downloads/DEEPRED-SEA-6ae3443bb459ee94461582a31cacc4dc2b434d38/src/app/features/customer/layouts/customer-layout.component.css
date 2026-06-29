@@ -1,0 +1,241 @@
+/* ══ NAVBAR ══ */
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(251,249,248,0.88) !important;
+  z-index: 1050;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  gap: 1rem;
+}
+
+.navbar-border {
+  border-bottom: 1px solid rgba(0,93,144,0.08);
+}
+
+/* Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+/* Fix logo border on mobile */
+.nav-logo img {
+  display: block;
+}
+
+.navbar-brand-logo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,191,252,0.3));
+}
+.navbar-brand-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+.brand-aqua { color: #002F7A; }
+.brand-base { color: #01BFFC; }
+
+/* Desktop Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
+}
+.nav-pill {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: all 0.22s;
+  white-space: nowrap;
+}
+.nav-pill:hover  { background: rgba(0,93,144,0.07); color: var(--primary); }
+.nav-pill.active {
+  background: rgba(0,93,144,0.10);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* Right side */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* User */
+.user-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--on-surface);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+.user-link:hover { background: var(--surface-container); }
+.user-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #005d90, #01BFFC);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.logout-btn { padding: 0.5rem 0.75rem; }
+.logout-icon { font-size: 1.1rem; vertical-align: middle; }
+.guest-signin { font-size: 0.85rem; text-decoration: none; padding: 0.5rem 1.1rem; }
+.guest-signup { font-size: 0.85rem; text-decoration: none; padding: 0.5rem 1.25rem; }
+
+/* ── Hamburger ── */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: var(--surface-container);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 8px;
+  transition: background 0.2s;
+}
+.hamburger:hover { background: var(--surface-container-high); }
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--on-surface);
+  border-radius: 9999px;
+  transition: all 0.3s ease-out;
+  transform-origin: center;
+}
+/* X animation */
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile Menu ── */
+.mobile-menu {
+  position: fixed;
+  top: 70px; left: 0; right: 0;
+  z-index: 1040;
+  background: var(--surface);
+  border-bottom: 1px solid var(--surface-container-high);
+  box-shadow: 0 16px 40px rgba(0,29,50,0.12);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease-out;
+  opacity: 0;
+}
+.mobile-menu--open {
+  max-height: 100vh;
+  opacity: 1;
+}
+.mobile-menu-inner {
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.mobile-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 0.75rem;
+  border-radius: 0.75rem;
+  color: var(--on-surface);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.mobile-menu-link:hover  { background: var(--surface-container-low); }
+.mobile-menu-link.active {
+  background: rgba(0,93,144,0.08);
+  color: var(--primary);
+}
+.mobile-menu-icon { color: var(--primary); font-size: 1.2rem; }
+.mobile-menu-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-container-high);
+}
+
+/* ══ MAIN ══ */
+.page-main { padding-top: 72px; min-height: 100vh; background: var(--background); }
+
+/* ══ FOOTER ══ */
+.site-footer { background: #001d32; color: rgba(255,255,255,0.7); padding: 3rem 2rem 2rem; }
+.footer-brand-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1); /* أبيض عشان الفوتر داكن */
+}
+.footer-logo-name  { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.15rem; }
+.footer-brand-aqua { color: #7eb8f7; }
+.footer-brand-base { color: #01BFFC; }
+.footer-desc    { font-size: 0.875rem; line-height: 1.7; }
+.footer-heading { color: #fff; font-weight: 700; margin-bottom: 1rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+.footer-links   { font-size: 0.85rem; }
+.footer-link    { color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s; }
+.footer-link:hover { color: #01BFFC; }
+.footer-newsletter-input {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 9999px;
+  padding: 0.6rem 1rem;
+  color: #fff;
+  font-size: 0.875rem;
+  outline: none;
+}
+.footer-subscribe-btn { font-size: 0.8rem; white-space: nowrap; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+}
+.footer-credit-link { color: #01BFFC; text-decoration: none; font-weight: 700; }
+.footer-credit-link:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 991.98px) {
+  .nav-inner { padding: 0.75rem 1.25rem;}
+}
+@media (max-width: 480px) {
+  .navbar-brand-name { font-size: 1.1rem; }
+  .navbar-brand-logo { height: 32px; }
+  .guest-signup { font-size: 0.78rem; padding: 0.45rem 0.9rem; }
+
+}

@@ -1,0 +1,30 @@
+
+.page-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.25rem; }
+.page-subtitle { color:var(--on-surface-variant); margin:0; }
+
+.period-tab-bar    { background:var(--surface-container-low); }
+.period-tab-active { background:#fff; color:var(--primary); font-weight:700; box-shadow:0 2px 6px rgba(0,29,50,.08); }
+.period-tab-idle   { background:transparent; color:var(--on-surface-variant); }
+.period-tab        { font-size:.82rem; cursor:pointer; transition:all .2s; }
+
+/* Chart */
+.chart-title { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin:0; }
+.chart-bar   { transition:height 1s ease; background:linear-gradient(to top,#005d90,#50d9fe); cursor:pointer; }
+.chart-val   { font-size:.68rem; font-weight:700; color:var(--primary); }
+.chart-month { font-size:.72rem; color:var(--on-surface-variant); }
+.chart-legend-dot { width:12px; height:12px; border-radius:3px; background:linear-gradient(135deg,#005d90,#50d9fe); }
+.chart-legend-text { font-size:.78rem; color:var(--on-surface-variant); }
+
+/* Location breakdown */
+.loc-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1.5rem; }
+.loc-name     { font-weight:600; color:var(--on-surface); font-size:.875rem; }
+.loc-pct      { font-weight:700; color:var(--primary); font-size:.875rem; }
+.loc-track    { background:var(--surface-container); border-radius:9999px; height:8px; overflow:hidden; }
+.loc-bar      { height:100%; border-radius:9999px; transition:width 1s .2s; }
+.loc-bookings { font-size:.72rem; color:var(--on-surface-variant); margin-top:3px; }
+
+/* Booking volume chart */
+.vol-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1.5rem; }
+.vol-bar      { background:linear-gradient(to top,rgba(0,103,125,.8),rgba(80,217,254,.4)); transition:height 1s; }
+.vol-val      { font-size:.68rem; font-weight:700; color:var(--secondary); }
+.vol-month    { font-size:.72rem; color:var(--on-surface-variant); }

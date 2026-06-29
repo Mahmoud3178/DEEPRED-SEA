@@ -1,0 +1,404 @@
+/* ============================
+   DEEPRED SEA — Azure Sands Design System
+   ============================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&family=Inter:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+
+html {
+  scroll-behavior: smooth;
+}
+:root {
+  --primary: #005d90;
+  --primary-container: #0077b6;
+  --primary-fixed: #cde5ff;
+  --primary-fixed-dim: #94ccff;
+  --on-primary: #ffffff;
+  --on-primary-fixed: #001d32;
+  --secondary: #00677d;
+  --secondary-container: #50d9fe;
+  --on-secondary: #ffffff;
+  --surface: #fbf9f8;
+  --surface-bright: #fbf9f8;
+  --surface-dim: #dcd9d9;
+  --surface-container: #f0eded;
+  --surface-container-low: #f6f3f2;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #eae8e7;
+  --surface-container-highest: #e4e2e1;
+  --on-surface: #1b1c1c;
+  --on-surface-variant: #404850;
+  --outline: #707881;
+  --outline-variant: #bfc7d1;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --tertiary: #3156a2;
+  --tertiary-container: #4c6fbc;
+  --background: #fbf9f8;
+  --on-background: #1b1c1c;
+}
+
+/* Typography */
+body {
+  font-family: 'Manrope', sans-serif;
+  background-color: var(--background);
+  color: var(--on-background);
+}
+
+h1, h2, h3, h4, .font-headline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-label {
+  font-family: 'Inter', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* ============================
+   Glass & Blur Effects
+   ============================ */
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(251, 249, 248, 0.80) !important;
+}
+
+.glass-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* ============================
+   Buttons
+   ============================ */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #005d90, #0077b6);
+  border: none;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.65rem 1.75rem;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 4px 15px rgba(0, 93, 144, 0.35);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-primary-gradient:hover {
+  background: linear-gradient(135deg, #004b74, #005d90);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0, 93, 144, 0.45);
+  color: #fff;
+}
+
+.btn-primary-gradient:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary-tonal {
+  background: var(--surface-container-high);
+  border: none;
+  color: var(--on-surface);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.65rem 1.75rem;
+  transition: all 0.3s ease-out;
+  cursor: pointer;
+}
+
+.btn-secondary-tonal:hover {
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+}
+
+/* ============================
+   Cards
+   ============================ */
+.card-premium {
+  background: var(--surface-container-lowest);
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 29, 50, 0.07);
+  transition: all 0.3s ease-out;
+}
+
+.card-premium:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 29, 50, 0.12);
+}
+
+/* ============================
+   Sidebar
+   ============================ */
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1040;
+  background: var(--surface-container-highest);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease-out;
+}
+
+.sidebar-dark {
+  background: #0f1923;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  color: var(--on-surface-variant);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.25s ease-out;
+  cursor: pointer;
+}
+
+.sidebar-link:hover {
+  background: rgba(0, 93, 144, 0.08);
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  background: rgba(0, 93, 144, 0.12);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.main-content {
+  margin-left: 260px;
+  transition: margin 0.3s ease-out;
+}
+
+/* ============================
+   Forms / Inputs
+   ============================ */
+.form-control-tonal {
+  background: var(--surface-container-low);
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  color: var(--on-surface);
+  padding: 0.75rem 1rem;
+  font-family: 'Manrope', sans-serif;
+  transition: all 0.25s ease-out;
+}
+
+.form-control-tonal:focus {
+  background: var(--surface-container-lowest);
+  border-color: rgba(0, 93, 144, 0.3);
+  box-shadow: 0 0 0 3px rgba(0, 93, 144, 0.1);
+  outline: none;
+  color: var(--on-surface);
+}
+
+.form-control-tonal::placeholder {
+  color: var(--outline);
+}
+
+/* ============================
+   Status Badges
+   ============================ */
+.badge-active {
+  background: rgba(0, 103, 125, 0.1);
+  color: var(--secondary);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-blocked {
+  background: rgba(186, 26, 26, 0.1);
+  color: var(--error);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ============================
+   Stat Cards
+   ============================ */
+.stat-card {
+  background: var(--surface-container-lowest);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 29, 50, 0.06);
+}
+
+.stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,93,144,0.12), rgba(0,119,182,0.08));
+}
+
+.stat-card .stat-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--on-surface);
+  line-height: 1;
+  margin-top: 0.75rem;
+}
+
+.stat-card .stat-label {
+  font-size: 0.8rem;
+  color: var(--on-surface-variant);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.stat-card .stat-change {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.stat-card .stat-change.up {
+  color: #16a34a;
+}
+
+.stat-card .stat-change.down {
+  color: var(--error);
+}
+
+/* ============================
+   Tonal sections
+   ============================ */
+.tonal-section {
+  background: var(--surface-container-low);
+  border-radius: 1.5rem;
+  padding: 2rem;
+}
+
+/* ============================
+   Animations
+   ============================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-marker {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.6); }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* ============================
+   Responsive
+   ============================ */
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+/* ============================
+   Scrollbar styling
+   ============================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-container-low); }
+::-webkit-scrollbar-thumb {
+  background: var(--outline-variant);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ============================
+   Utility overrides
+   ============================ */
+.text-primary-brand { color: var(--primary) !important; }
+.bg-primary-brand   { background-color: var(--primary) !important; }
+.rounded-xl  { border-radius: 0.75rem !important; }
+.rounded-2xl { border-radius: 1rem !important; }
+.rounded-3xl { border-radius: 1.5rem !important; }
+
+/* ============================
+   Table Clean
+   ============================ */
+.table-clean {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.table-clean thead tr th {
+  border: none;
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--on-surface-variant);
+  padding: 0.5rem 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.table-clean tbody tr td {
+  background: var(--surface-container-lowest);
+  border: none;
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+}
+
+.table-clean tbody tr td:first-child {
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.table-clean tbody tr td:last-child {
+  border-radius: 0 0.75rem 0.75rem 0;
+}
+
+.table-clean tbody tr:hover td {
+  background: rgba(0, 93, 144, 0.04);
+}
+
+
+
+/* Fix active routerLink adding border ── */
+a.active img, a:focus img {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+a { outline: none; }

@@ -1,0 +1,192 @@
+<div style="background:var(--background);min-height:100vh;">
+
+  <!-- Hero -->
+  <div class="position-relative detail-hero">
+    <img [src]="center.image" [alt]="center.name" class="detail-hero-img">
+    <div class="detail-hero-overlay"></div>
+    <div class="position-absolute bottom-0 start-0 p-4 p-md-5 w-100">
+      <div class="container">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+          <div>
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+              <span *ngIf="center.verified" class="d-inline-flex align-items-center gap-1 px-3 py-1 rounded-pill verified-pill">
+                <span class="material-symbols-outlined verified-pill-icon">verified</span> Verified Center
+              </span>
+              <span *ngFor="let tag of center.tags" class="tag-pill">{{tag}}</span>
+            </div>
+            <h1 class="hero-center-name">{{center.name}}</h1>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <div class="d-flex align-items-center gap-1 hero-location">
+                <span class="material-symbols-outlined hero-loc-icon">location_on</span>
+                {{center.location}}
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined hero-rating-star">star</span>
+                <span class="hero-rating-val">{{center.rating}}</span>
+                <span class="hero-rating-count">({{center.reviews}} reviews)</span>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button (click)="openWhatsApp()" class="d-flex align-items-center gap-2 px-4 py-2 rounded-pill border-0 fw-bold wa-btn">
+              <span class="material-symbols-outlined wa-icon">chat</span> WhatsApp
+            </button>
+            <button (click)="bookTrip('')" class="btn-primary-gradient d-flex align-items-center gap-2 px-4 py-2">
+              <span class="material-symbols-outlined book-icon">bookmark_add</span> Book Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <div class="row g-5">
+
+      <!-- Main content -->
+      <div class="col-12 col-lg-8">
+
+        <!-- Tabs -->
+        <div class="d-flex gap-1 mb-5 p-1 rounded-3 tab-bar">
+          <button *ngFor="let tab of ['overview','trips','gallery','reviews']"
+            (click)="selectedTab=tab"
+            class="flex-fill py-2 px-3 border-0 rounded-3 tab-btn"
+            [class.tab-btn-active]="selectedTab===tab"
+            [class.tab-btn-inactive]="selectedTab!==tab">
+            {{tab}}
+          </button>
+        </div>
+
+        <!-- Overview -->
+        <div *ngIf="selectedTab==='overview'" class="animate-fadeInUp">
+          <h4 class="overview-title">About {{center.name}}</h4>
+          <p class="overview-text">{{center.description}}</p>
+          <div class="row g-3 mt-3">
+            <div class="col-6 col-md-3" *ngFor="let s of [
+              {val:center.reviews, label:'Reviews'},
+              {val:center.rating,  label:'Rating'},
+              {val:center.trips.length, label:'Trip Types'},
+              {val:'10+', label:'Years Active'}
+            ]">
+              <div class="text-center p-3 stat-box">
+                <div class="stat-box-value">{{s.val}}</div>
+                <div class="stat-box-label">{{s.label}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trips -->
+        <div *ngIf="selectedTab==='trips'" class="animate-fadeInUp">
+          <h4 class="trips-title">Available Trips</h4>
+          <div class="d-flex flex-column gap-3">
+            <div *ngFor="let trip of center.trips" class="card-premium p-4">
+              <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <h6 class="trip-name">{{trip.name}}</h6>
+                    <span class="badge-active">{{trip.type}}</span>
+                  </div>
+                  <div class="d-flex gap-4 flex-wrap">
+                    <div class="d-flex align-items-center gap-1 trip-meta">
+                      <span class="material-symbols-outlined trip-meta-icon">schedule</span> {{trip.duration}}
+                    </div>
+                    <div class="d-flex align-items-center gap-1 trip-meta">
+                      <span class="material-symbols-outlined trip-meta-icon">water</span> Max {{trip.depth}}
+                    </div>
+                    <div class="d-flex align-items-center gap-1 trip-meta">
+                      <span class="material-symbols-outlined trip-meta-icon">group</span> {{trip.available}} spots left
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="text-end">
+                    <div class="trip-price">EGP {{trip.price}}</div>
+                    <div class="trip-per">per person</div>
+                  </div>
+                  <button (click)="bookTrip(trip.id)" class="btn-primary-gradient px-4 py-2" style="font-size:.85rem;">Book</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gallery -->
+        <div *ngIf="selectedTab==='gallery'" class="animate-fadeInUp">
+          <div class="row g-2">
+            <div class="col-6" *ngFor="let img of center.gallery">
+              <img [src]="img" alt="Gallery" class="gallery-img">
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews -->
+        <div *ngIf="selectedTab==='reviews'" class="animate-fadeInUp">
+          <div class="d-flex flex-column gap-3">
+            <div *ngFor="let review of center.reviewsList" class="card-premium p-4">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold review-avatar">
+                  {{review.name.charAt(0)}}
+                </div>
+                <div>
+                  <div class="reviewer-name">{{review.name}}</div>
+                  <div class="reviewer-date">{{review.date}}</div>
+                </div>
+                <div class="ms-auto d-flex">
+                  <span *ngFor="let s of [1,2,3,4,5]" class="material-symbols-outlined review-star"
+                    [style.color]="s<=review.rating ? '#f59e0b' : 'var(--surface-container-high)'">star</span>
+                </div>
+              </div>
+              <p class="review-text">{{review.text}}</p>
+              <!-- Center Reply -->
+              <div *ngIf="review.reply" class="d-flex align-items-start gap-2 mt-3 p-3 rounded-3"
+                style="background:rgba(0,93,144,0.05); border-left: 3px solid var(--primary);">
+                <span class="material-symbols-outlined mt-1" style="color:var(--primary); font-size:1rem;">reply</span>
+                <div>
+                  <div style="font-size:.72rem; font-weight:700; color:var(--primary); font-family:'Inter',sans-serif; margin-bottom:.25rem;">
+                    CENTER REPLY
+                  </div>
+                  <p style="font-size:.85rem; color:var(--on-surface-variant); margin:0; line-height:1.6;">
+                    {{review.reply}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sticky sidebar -->
+      <div class="col-12 col-lg-4">
+        <div class="card-premium p-4 detail-sidebar">
+          <div class="price-from-label">Starting from</div>
+          <div class="price-from-val">EGP {{center.price}}<span class="price-per-suffix"> / dive</span></div>
+
+          <button (click)="bookTrip('')" class="btn-primary-gradient w-100 py-3 d-flex align-items-center justify-content-center gap-2 mb-3">
+            <span class="material-symbols-outlined">bookmark_add</span> Book a Dive
+          </button>
+          <button (click)="openWhatsApp()" class="w-100 py-3 d-flex align-items-center justify-content-center gap-2 rounded-pill border-0 fw-bold mb-4 sidebar-wa-btn">
+            <span class="material-symbols-outlined">chat</span> Chat on WhatsApp
+          </button>
+
+          <div class="d-flex flex-column gap-2">
+            <div class="d-flex align-items-center gap-2 sidebar-contact-item">
+              <span class="material-symbols-outlined sidebar-contact-icon">phone</span> {{center.phone}}
+            </div>
+            <div class="d-flex align-items-center gap-2 sidebar-contact-item">
+              <span class="material-symbols-outlined sidebar-contact-icon">location_on</span> {{center.location}}
+            </div>
+            <div class="d-flex align-items-center gap-2 sidebar-contact-item">
+              <span class="material-symbols-outlined sidebar-contact-icon">verified</span> Verified & Insured
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2 mt-3 p-3 rounded-3 sidebar-secure-box">
+            <span class="material-symbols-outlined sidebar-secure-icon">shield</span>
+            <span class="sidebar-secure-text">Free cancellation up to 24 hours before</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

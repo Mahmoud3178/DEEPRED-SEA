@@ -1,0 +1,26 @@
+
+.page-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.25rem; }
+.page-subtitle { color:var(--on-surface-variant); margin:0; }
+.save-success  { background:rgba(0,103,125,.1); color:var(--secondary); border:none; border-radius:1rem; font-weight:600; }
+.save-success-icon { font-variation-settings:'FILL' 1; }
+
+.section-heading { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1.5rem; }
+.section-heading-icon { vertical-align:middle; color:var(--primary); }
+.field-label   { font-size:.83rem; font-weight:600; color:var(--on-surface); }
+.field-hint    { font-size:.75rem; color:var(--on-surface-variant); margin-top:.35rem; }
+
+.toggle-row    { background:var(--surface-container-low); }
+.toggle-label  { font-weight:600; color:var(--on-surface); font-size:.9rem; }
+.toggle-desc   { font-size:.78rem; color:var(--on-surface-variant); }
+
+/* System info sidebar */
+.sysinfo-title  { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1.5rem; }
+.sysinfo-label  { font-size:.85rem; color:var(--on-surface-variant); }
+.sysinfo-val    { font-size:.85rem; font-weight:600; color:var(--on-surface); }
+.sysinfo-divider{ border-bottom:1px solid var(--surface-container-high); }
+.status-online  { background:rgba(0,103,125,.08); }
+.status-offline { background:rgba(186,26,26,.08); }
+.status-icon-on { color:var(--secondary); }
+.status-icon-off{ color:var(--error); }
+.status-text-on { font-weight:700; font-size:.875rem; color:var(--secondary); }
+.status-text-off{ font-weight:700; font-size:.875rem; color:var(--error); }

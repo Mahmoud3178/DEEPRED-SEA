@@ -1,0 +1,98 @@
+<div class="animate-fadeInUp">
+  <div class="mb-4">
+    <h2 class="page-title">Platform Settings</h2>
+    <p class="page-subtitle">Global configuration for the platform</p>
+  </div>
+
+  <div *ngIf="saved" class="alert d-flex align-items-center gap-2 mb-4 save-success">
+    <span class="material-symbols-outlined save-success-icon">check_circle</span>
+    Settings saved successfully!
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <!-- General -->
+      <div class="card-premium p-4 p-md-5 mb-4">
+        <h6 class="section-heading">
+          <span class="material-symbols-outlined section-heading-icon me-2">settings</span>
+          General Settings
+        </h6>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label field-label">Platform Name</label>
+            <input [(ngModel)]="platformName" type="text" class="form-control-tonal w-100">
+          </div>
+          <div class="col-12">
+            <label class="form-label field-label">Platform Commission Rate (%)</label>
+            <input [(ngModel)]="commissionRate" type="number" min="0" max="50" class="form-control-tonal w-100">
+            <div class="field-hint">Currently taking {{commissionRate}}% from each booking</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature flags -->
+      <div class="card-premium p-4 p-md-5">
+        <h6 class="section-heading">
+          <span class="material-symbols-outlined section-heading-icon me-2">toggle_on</span>
+          Feature Flags
+        </h6>
+        <div class="d-flex flex-column gap-3">
+          <div *ngFor="let item of [
+            {key:'allowRegistrations', label:'Allow New Registrations', desc:'Allow new users and centers to register'},
+            {key:'requireCenterVerification', label:'Require Center Verification', desc:'Centers must be verified by admin before going live'},
+            {key:'maintenanceMode', label:'Maintenance Mode', desc:'Platform shows maintenance page to all users'}
+          ]" class="d-flex align-items-center justify-content-between p-3 rounded-3 toggle-row">
+            <div>
+              <div class="toggle-label">{{item.label}}</div>
+              <div class="toggle-desc">{{item.desc}}</div>
+            </div>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" role="switch"
+                [(ngModel)]="$any(this)[item.key]"
+                style="width:3em;height:1.5em;cursor:pointer;">
+            </div>
+          </div>
+        </div>
+
+        <button (click)="save()" class="btn-primary-gradient mt-4 px-5 py-3 d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size:1rem;">save</span>
+          Save All Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- System info -->
+    <div class="col-12 col-lg-4">
+      <div class="card-premium p-4" style="position:sticky;top:100px;">
+        <h6 class="sysinfo-title">System Info</h6>
+        <div class="d-flex flex-column gap-3">
+          <div *ngFor="let info of [
+            {label:'Version', value:'v2.5.0'},
+            {label:'Environment', value:'Production'},
+            {label:'Database', value:'Connected ✓'},
+            {label:'Storage', value:'67% used'},
+            {label:'Last Backup', value:'2 hrs ago'}
+          ]" class="d-flex justify-content-between py-2 sysinfo-divider">
+            <span class="sysinfo-label">{{info.label}}</span>
+            <span class="sysinfo-val">{{info.value}}</span>
+          </div>
+        </div>
+
+        <div class="mt-4 p-3 rounded-3"
+             [class.status-online]="!maintenanceMode"
+             [class.status-offline]="maintenanceMode">
+          <div class="d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined"
+              [class.status-icon-on]="!maintenanceMode"
+              [class.status-icon-off]="maintenanceMode">
+              {{maintenanceMode?'warning':'check_circle'}}
+            </span>
+            <span [class.status-text-on]="!maintenanceMode" [class.status-text-off]="maintenanceMode">
+              {{maintenanceMode?'Maintenance Mode ON':'Platform Online'}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

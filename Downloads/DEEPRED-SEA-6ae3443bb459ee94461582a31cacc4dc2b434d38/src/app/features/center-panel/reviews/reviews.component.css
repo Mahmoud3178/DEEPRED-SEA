@@ -1,0 +1,23 @@
+.page-title    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; color:var(--on-surface); margin-bottom:.25rem; }
+.page-subtitle { color:var(--on-surface-variant); margin:0; }
+
+.avg-rating-val  { font-family:'Plus Jakarta Sans',sans-serif; font-size:3rem; font-weight:800; color:var(--primary); }
+.avg-star        { color:#f59e0b; font-size:1.25rem; font-variation-settings:'FILL' 1; }
+.avg-label       { color:var(--on-surface-variant); font-size:.85rem; }
+.stat-big-val    { font-family:'Plus Jakarta Sans',sans-serif; font-size:3rem; font-weight:800; color:var(--primary); }
+.stat-big-label  { color:var(--on-surface-variant); font-size:.85rem; margin-top:.5rem; }
+
+.review-avatar  { width:44px; height:44px; background:linear-gradient(135deg,#005d90,#50d9fe); color:#fff; font-size:1rem; flex-shrink:0; }
+.reviewer-name  { font-weight:700; color:var(--on-surface); }
+.reviewer-meta  { color:var(--on-surface-variant); font-size:.8rem; margin-left:.5rem; }
+.review-star    { font-size:.9rem; font-variation-settings:'FILL' 1; color:#f59e0b; }
+.review-text    { color:var(--on-surface-variant); line-height:1.6; margin-bottom:1rem; }
+
+.reply-box        { background:rgba(0,93,144,.06); border-left:3px solid var(--primary); }
+.reply-box-label  { font-size:.78rem; font-weight:700; color:var(--primary); margin-bottom:.25rem; }
+.reply-box-icon   { font-size:.9rem; vertical-align:middle; }
+.reply-box-text   { color:var(--on-surface-variant); font-size:.875rem; margin:0; }
+
+.reply-btn { color:var(--primary); font-weight:600; font-size:.85rem; cursor:pointer; }
+.reply-btn-icon { font-size:1rem; }
+.reply-send-icon { font-size:.9rem; }

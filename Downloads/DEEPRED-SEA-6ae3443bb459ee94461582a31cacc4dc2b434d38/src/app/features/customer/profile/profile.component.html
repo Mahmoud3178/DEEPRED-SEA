@@ -1,0 +1,308 @@
+<div style="background:var(--background);min-height:100vh;">
+
+  <!-- Hero -->
+  <div class="profile-hero">
+    <div class="container text-center">
+
+      <div class="profile-avatar-wrap mb-3" (click)="avatarInput.click()">
+        <img *ngIf="avatarPreview" [src]="avatarPreview" class="profile-avatar-img">
+        <div *ngIf="!avatarPreview"
+          class="rounded-circle d-inline-flex align-items-center justify-content-center fw-bold profile-avatar">
+          {{auth.currentUser?.name?.charAt(0)?.toUpperCase()}}
+        </div>
+        <div class="profile-avatar-overlay">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <input #avatarInput type="file" accept="image/*" class="d-none" (change)="onAvatarChange($event)">
+      </div>
+
+      <h2 class="profile-name">{{editName || auth.currentUser?.name}}</h2>
+      <p class="profile-email">{{auth.currentUser?.email}}</p>
+      <div class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill mt-2 profile-level-badge">
+        <span class="material-symbols-outlined level-icon">military_tech</span>
+        <span class="level-text">{{stats.level}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="container profile-stats">
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3" *ngFor="let s of [
+        {val:stats.dives,  label:'Total Dives'},
+        {val:stats.streak, label:'Day Streak 🔥'},
+        {val:stats.points, label:'Points'},
+        {val:'4',          label:'Locations'}
+      ]">
+        <div class="card-premium text-center p-4">
+          <div class="pstat-value">{{s.val}}</div>
+          <div class="pstat-label">{{s.label}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="card-premium p-4 mb-4">
+      <div class="d-flex justify-content-between mb-2">
+        <span class="progress-label">Progress to Master Diver</span>
+        <span class="progress-count">{{stats.dives}}/50 dives</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" [style.width]="(stats.dives/50*100)+'%'"></div>
+      </div>
+      <p class="progress-hint">{{50 - stats.dives}} more dives to unlock Master Diver badge</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="d-flex gap-1 mb-4 p-1 rounded-3 tab-bar">
+      <button *ngFor="let tab of ['bookings','logbook','settings']" (click)="selectedTab=tab"
+        class="flex-fill py-2 px-3 border-0 rounded-3 tab-btn"
+        [class.tab-active]="selectedTab===tab"
+        [class.tab-inactive]="selectedTab!==tab">
+        {{tab==='bookings' ? 'My Bookings' : tab==='logbook' ? 'Dive Logbook' : 'Settings'}}
+      </button>
+    </div>
+
+    <!-- ══ BOOKINGS ══ -->
+    <div *ngIf="selectedTab==='bookings'" class="mb-5">
+      <div class="d-flex flex-column gap-3">
+        <div *ngFor="let b of bookings" class="card-premium p-4 booking-card" (click)="openFromBooking(b)">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <h6 class="booking-trip">{{b.trip}}</h6>
+                <span [class]="b.status==='confirmed'?'badge-active':'badge-pending'">{{b.status}}</span>
+              </div>
+              <div class="booking-meta">{{b.center}} · {{b.date}}</div>
+            </div>
+            <div class="text-end">
+              <div class="booking-price">EGP {{b.total}}</div>
+              <div class="booking-id">Booking #{{b.id}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LOGBOOK ══ -->
+    <div *ngIf="selectedTab==='logbook'" class="mb-5">
+
+      <!-- Detail View -->
+      <div *ngIf="selectedDive; else logbookList" class="logbook-detail-anim">
+        <button class="logbook-back-btn mb-4" (click)="selectedDive=null">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Logbook
+        </button>
+
+        <div class="logbook-detail-card">
+          <div class="logbook-detail-header">
+            <div>
+              <div class="logbook-detail-tag">Dive Log</div>
+              <h4 class="logbook-detail-title">{{selectedDive.trip}}</h4>
+              <div class="logbook-detail-meta">{{selectedDive.center}} · {{selectedDive.date}}</div>
+            </div>
+            <span [class]="selectedDive.status==='confirmed'?'badge-active':'badge-pending'">
+              {{selectedDive.status}}
+            </span>
+          </div>
+
+          <div class="logbook-stats-row">
+            <div class="logbook-stat" *ngFor="let s of getDiveStats(selectedDive)">
+              <div class="logbook-stat-val">{{s.val}}</div>
+              <div class="logbook-stat-key">{{s.key}}</div>
+            </div>
+          </div>
+
+          <div class="logbook-section-label">Dive Notes</div>
+          <textarea [(ngModel)]="selectedDive.notes"
+            class="form-control-tonal w-100 logbook-notes"
+            placeholder="How was the dive? What did you see? Any highlights?"></textarea>
+
+          <div class="logbook-section-label mt-4">Dive Photos</div>
+          <div class="logbook-photos-grid">
+            <div *ngFor="let photo of selectedDive.photos" class="logbook-photo-item">
+              <img [src]="photo" alt="dive photo" class="logbook-photo-img">
+            </div>
+            <div class="logbook-photo-add" (click)="photoInput.click()">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Add Photo</span>
+              <input #photoInput type="file" accept="image/*" multiple class="d-none" (change)="onPhotoUpload($event)">
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 mt-4">
+            <button class="settings-save-btn" (click)="saveDiveLog()">Save Log</button>
+            <span *ngIf="logSaved" class="settings-saved-msg">✓ Log saved</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <ng-template #logbookList>
+        <div *ngIf="completedDives.length; else emptyLogbook" class="d-flex flex-column gap-3">
+          <div *ngFor="let b of completedDives" class="logbook-entry" (click)="openDiveLog(b)">
+            <div class="logbook-entry-left">
+              <div class="logbook-entry-icon">🤿</div>
+              <div>
+                <div class="logbook-entry-name">{{b.trip}}</div>
+                <div class="logbook-entry-meta">{{b.center}} · {{b.date}}</div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+              <div class="logbook-entry-price">EGP {{b.total}}</div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--outline)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <ng-template #emptyLogbook>
+          <div class="text-center py-5">
+            <div style="font-size:4rem;">🤿</div>
+            <h5 class="logbook-empty-title">Your Dive Logbook</h5>
+            <p class="logbook-empty-desc">Complete a dive to start your logbook journey</p>
+            <a routerLink="/home/centers" class="btn-primary-gradient text-decoration-none d-inline-flex align-items-center gap-2 px-5 py-3 mt-2">
+              Find a Dive
+            </a>
+          </div>
+        </ng-template>
+      </ng-template>
+
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div *ngIf="selectedTab==='settings'" class="mb-5 settings-anim">
+      <div class="row g-4">
+
+        <!-- Personal Info -->
+        <div class="col-12 col-lg-7">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-tag">Personal Info</div>
+              <h5 class="settings-card-title">Update your details</h5>
+            </div>
+            <div class="settings-card-body">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="settings-label">Full Name</label>
+                  <input [(ngModel)]="editName" type="text" class="form-control-tonal w-100 mt-1"
+                    [placeholder]="auth.currentUser?.name || 'Your name'">
+                </div>
+                <div class="col-12">
+                  <label class="settings-label">Email Address</label>
+                  <input [(ngModel)]="editEmail" type="email" class="form-control-tonal w-100 mt-1"
+                    [placeholder]="auth.currentUser?.email || 'your@email.com'">
+                </div>
+                <div class="col-12">
+                  <label class="settings-label">Bio</label>
+                  <textarea [(ngModel)]="editBio" class="form-control-tonal w-100 mt-1 settings-textarea"
+                    placeholder="Tell us about your diving journey..."></textarea>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label class="settings-label">Location</label>
+                  <input [(ngModel)]="editLocation" type="text" class="form-control-tonal w-100 mt-1"
+                    placeholder="Cairo, Egypt">
+                </div>
+                <div class="col-12 col-sm-6">
+                  <label class="settings-label">Certification Level</label>
+                  <select [(ngModel)]="editCert" class="form-control-tonal w-100 mt-1">
+                    <option>Open Water</option>
+                    <option>Advanced Open Water</option>
+                    <option>Rescue Diver</option>
+                    <option>Divemaster</option>
+                    <option>Instructor</option>
+                  </select>
+                </div>
+                <div class="col-12 d-flex align-items-center gap-3 flex-wrap">
+                  <button class="settings-save-btn" (click)="saveProfile()">Save Changes</button>
+                  <span *ngIf="saveSuccess" class="settings-saved-msg">✓ Saved successfully</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password + Danger -->
+        <div class="col-12 col-lg-5 d-flex flex-column gap-4">
+
+          <!-- Password -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-tag">Security</div>
+              <h5 class="settings-card-title">Change Password</h5>
+            </div>
+            <div class="settings-card-body">
+              <div class="d-flex flex-column gap-3">
+
+                <div>
+                  <label class="settings-label">Current Password</label>
+                  <div class="pass-input-wrap mt-1">
+                    <input [(ngModel)]="currentPass" [type]="showCurrent ? 'text' : 'password'"
+                      class="form-control-tonal w-100" placeholder="••••••••">
+                    <button class="pass-eye-btn" (click)="showCurrent=!showCurrent" type="button">
+                      <svg *ngIf="!showCurrent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg *ngIf="showCurrent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="settings-label">New Password</label>
+                  <div class="pass-input-wrap mt-1">
+                    <input [(ngModel)]="newPass" [type]="showNew ? 'text' : 'password'"
+                      class="form-control-tonal w-100" placeholder="••••••••">
+                    <button class="pass-eye-btn" (click)="showNew=!showNew" type="button">
+                      <svg *ngIf="!showNew" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg *ngIf="showNew" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="settings-label">Confirm New Password</label>
+                  <div class="pass-input-wrap mt-1">
+                    <input [(ngModel)]="confirmPass" [type]="showConfirm ? 'text' : 'password'"
+                      class="form-control-tonal w-100" placeholder="••••••••">
+                    <button class="pass-eye-btn" (click)="showConfirm=!showConfirm" type="button">
+                      <svg *ngIf="!showConfirm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg *ngIf="showConfirm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <button class="settings-pass-btn" (click)="changePassword()">Update Password</button>
+                <span *ngIf="passError"   class="settings-error">{{passError}}</span>
+                <span *ngIf="passSuccess" class="settings-saved-msg">✓ Password updated</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="settings-card settings-card--danger">
+            <div class="settings-card-header">
+              <div class="settings-card-tag settings-card-tag--danger">Danger Zone</div>
+              <h5 class="settings-card-title">Delete Account</h5>
+            </div>
+            <div class="settings-card-body">
+              <p class="settings-danger-desc">Once you delete your account, all your data will be permanently removed.</p>
+              <button class="settings-delete-btn" (click)="confirmDelete=true" *ngIf="!confirmDelete">
+                Delete My Account
+              </button>
+              <div *ngIf="confirmDelete" class="settings-confirm-box">
+                <p class="settings-confirm-text">Are you sure? This cannot be undone.</p>
+                <div class="d-flex gap-2 flex-wrap">
+                  <button class="settings-delete-btn" (click)="deleteAccount()">Yes, Delete</button>
+                  <button class="settings-cancel-btn" (click)="confirmDelete=false">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

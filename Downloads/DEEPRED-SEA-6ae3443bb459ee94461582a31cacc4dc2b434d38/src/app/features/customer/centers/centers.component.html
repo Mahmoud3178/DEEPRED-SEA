@@ -1,0 +1,106 @@
+<div class="centers-page">
+  <div class="container">
+    <div class="mb-5">
+      <h1 class="page-title">Dive Centers in Egypt</h1>
+      <p class="page-count">{{filteredCenters.length}} centers available</p>
+    </div>
+
+    <!-- Search + Filters -->
+    <div class="card-premium p-4 mb-5 about-block--anim">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-4">
+          <label class="filter-label">Search</label>
+          <div class="position-relative mt-1">
+            <span class="material-symbols-outlined position-absolute search-icon">search</span>
+            <input [(ngModel)]="searchQuery" type="text" placeholder="Center name or location..."
+              class="form-control-tonal w-100 ps-5">
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="filter-label">Location</label>
+          <select [(ngModel)]="selectedLocation" class="form-control-tonal w-100 mt-1">
+            <option *ngFor="let l of locations" [value]="l">{{l}}</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="filter-label">Type</label>
+          <select [(ngModel)]="selectedType" class="form-control-tonal w-100 mt-1">
+            <option *ngFor="let t of types" [value]="t">{{t}}</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-2">
+          <label class="filter-label">Sort By</label>
+          <select [(ngModel)]="sortBy" class="form-control-tonal w-100 mt-1">
+            <option value="rating">Top Rated</option>
+            <option value="price">Lowest Price</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location chips -->
+    <div class="d-flex gap-2 mb-4 flex-wrap about-block--anim">
+      <button *ngFor="let l of locations" (click)="selectedLocation=l"
+        class="px-3 py-1 rounded-pill border-0 filter-chip"
+        [class.filter-chip-active]="selectedLocation===l"
+        [class.filter-chip-inactive]="selectedLocation!==l">
+        {{l}}
+      </button>
+    </div>
+
+    <!-- Grid -->
+    <div class="row g-4 " *ngIf="filteredCenters.length; else noResults">
+      <div class="col-12 col-sm-6 col-xl-4" *ngFor="let c of filteredCenters">
+        <div class="card-premium h-100 center-card" (click)="goToCenter(c.id)">
+          <div class="position-relative center-img-wrap">
+            <img [src]="c.image" [alt]="c.name" class="center-img">
+            <div class="center-overlay"></div>
+            <div *ngIf="c.verified" class="position-absolute top-0 end-0 m-3">
+              <span class="d-flex align-items-center gap-1 px-2 py-1 rounded-pill verified-badge">
+                <span class="material-symbols-outlined verified-icon">verified</span>
+                Verified
+              </span>
+            </div>
+            <div class="position-absolute bottom-0 start-0 p-3 d-flex gap-1 flex-wrap">
+              <span *ngFor="let tag of c.tags" class="center-tag">{{tag}}</span>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div>
+                <h6 class="center-name">{{c.name}}</h6>
+                <div class="d-flex align-items-center gap-1 center-location">
+                  <span class="material-symbols-outlined center-loc-icon">location_on</span>
+                  {{c.location}}
+                </div>
+              </div>
+              <div class="text-end">
+                <div class="center-price">EGP {{c.price}}</div>
+                <div class="center-per-dive">from / dive</div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center gap-1">
+                <span class="material-symbols-outlined center-star">star</span>
+                <span class="center-rating">{{c.rating}}</span>
+                <span class="center-reviews">({{c.reviews}})</span>
+              </div>
+              <button class="btn-primary-gradient px-3 py-1" style="font-size:0.8rem;"
+                (click)="goToCenter(c.id); $event.stopPropagation()">
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noResults>
+      <div class="text-center py-5">
+        <span class="material-symbols-outlined empty-icon d-block">search_off</span>
+        <h4 class="empty-title">No centers found</h4>
+        <p class="empty-desc">Try adjusting your filters</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,265 @@
+<div class="animate-fadeInUp">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <div>
+      <h2 class="page-title">Bookings</h2>
+      <p class="total-revenue">Total Revenue:
+        <strong class="revenue-val">EGP {{totalRevenue | number}}</strong>
+      </p>
+    </div>
+    <div class="position-relative">
+      <span class="material-symbols-outlined position-absolute search-icon">search</span>
+      <input [(ngModel)]="search" type="text"
+        placeholder="Search by diver or ID..."
+        class="form-control-tonal ps-5 search-width">
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMsg" class="alert d-flex align-items-center gap-2 mb-4"
+    style="background:rgba(186,26,26,.1);color:#ba1a1a;border:none;border-radius:1rem;font-weight:600;">
+    <span class="material-symbols-outlined">error</span>{{errorMsg}}
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <button *ngFor="let tab of filterTabs"
+      (click)="setFilter(tab)"
+      class="px-4 py-2 rounded-pill border-0 filter-tab"
+      [class.tab-active]="filter === tab.value"
+      [class.tab-inactive]="filter !== tab.value">
+      {{tab.label}} ({{countByStatus(tab.value)}})
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <span class="material-symbols-outlined spin"
+      style="font-size:2.5rem;color:var(--primary);">progress_activity</span>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!isLoading" class="card-premium p-0" style="overflow:hidden;">
+    <div class="table-responsive">
+      <table class="table table-clean mb-0" style="min-width:800px;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Diver</th>
+            <th>Date</th>
+            <th>Divers</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of filtered" (click)="openBooking(b)" style="cursor:pointer;">
+
+            <td><span class="booking-id">{{b.id | slice:0:8}}…</span></td>
+
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold diver-avatar">
+                  {{(b.customerName ?? '?').charAt(0).toUpperCase()}}
+                </div>
+                <div>
+                  <div class="diver-name">{{b.customerName ?? '—'}}</div>
+                  <div class="diver-email">{{b.customerEmail ?? '—'}}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="date-cell">{{formatDate(b.departureDate)}}</td>
+            <td class="dives-cell">{{b.diversCount}}</td>
+            <td class="price-cell">EGP {{b.finalPriceAmount | number}}</td>
+
+            <td>
+              <span [class]="getPaymentClass(b.paymentStatus)">
+                {{b.paymentStatus ?? '—'}}
+              </span>
+            </td>
+
+            <td>
+              <span [class]="getStatusClass(b.bookingStatus)">
+                {{b.bookingStatus ?? '—'}}
+              </span>
+            </td>
+
+            <td>
+              <div class="d-flex gap-1" (click)="$event.stopPropagation()">
+                <button *ngIf="b.bookingStatus === 'Pending'"
+                  (click)="confirmBooking(b.id, $event)"
+                  [disabled]="actionLoading === b.id"
+                  title="Confirm"
+                  class="border-0 p-2 rounded-2 action-approve">
+                  <span class="material-symbols-outlined action-icon">
+                    {{actionLoading === b.id ? 'hourglass_empty' : 'check_circle'}}
+                  </span>
+                </button>
+                <button *ngIf="b.bookingStatus === 'Pending' || b.bookingStatus === 'Confirmed'"
+                  (click)="openCancelModal(b.id, $event)"
+                  [disabled]="actionLoading === b.id"
+                  title="Cancel"
+                  class="border-0 p-2 rounded-2 action-cancel">
+                  <span class="material-symbols-outlined action-icon">cancel</span>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+
+          <tr *ngIf="filtered.length === 0">
+            <td colspan="8" class="text-center py-5"
+              style="color:var(--on-surface-variant);">
+              <span class="material-symbols-outlined d-block mb-2 empty-icon">search_off</span>
+              No bookings found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1"
+      class="d-flex align-items-center justify-content-between px-4 py-3"
+      style="border-top:1px solid var(--surface-container-high);">
+      <span style="color:var(--on-surface-variant);font-size:.85rem;">
+        Page {{page}} of {{totalPages}} · {{totalCount}} bookings
+      </span>
+      <div class="d-flex gap-2">
+        <button (click)="prevPage()" [disabled]="page === 1"
+          class="border-0 px-3 py-1 rounded-2"
+          style="background:var(--surface-variant);color:var(--on-surface);">
+          <span class="material-symbols-outlined" style="font-size:1rem;">chevron_left</span>
+        </button>
+        <button (click)="nextPage()" [disabled]="page === totalPages"
+          class="border-0 px-3 py-1 rounded-2"
+          style="background:var(--surface-variant);color:var(--on-surface);">
+          <span class="material-symbols-outlined" style="font-size:1rem;">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ BOOKING DETAIL MODAL ══ -->
+  <div class="modal-backdrop-custom" *ngIf="selectedBooking" (click)="closeBooking()"></div>
+  <div class="booking-modal animate-fadeInUp" *ngIf="selectedBooking">
+
+    <div class="bm-header">
+      <div>
+        <div class="bm-tag">Booking Details</div>
+        <h4 class="bm-title">{{selectedBooking.id | slice:0:8}}…</h4>
+        <div class="bm-sub">{{formatDate(selectedBooking.departureDate)}}</div>
+      </div>
+      <button class="bm-close" (click)="closeBooking()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="bm-section">
+      <div class="bm-section-label">Diver</div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="bm-avatar">
+          {{(selectedBooking.customerName ?? '?').charAt(0).toUpperCase()}}
+        </div>
+        <div>
+          <div class="bm-diver-name">{{selectedBooking.customerName ?? '—'}}</div>
+          <div class="bm-diver-email">{{selectedBooking.customerEmail ?? '—'}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bm-stats-row">
+      <div class="bm-stat">
+        <div class="bm-stat-val">{{selectedBooking.diversCount}}</div>
+        <div class="bm-stat-key">Divers</div>
+      </div>
+      <div class="bm-stat">
+        <div class="bm-stat-val">EGP {{selectedBooking.finalPriceAmount | number}}</div>
+        <div class="bm-stat-key">Total</div>
+      </div>
+      <div class="bm-stat">
+        <span [class]="getStatusClass(selectedBooking.bookingStatus)">
+          {{selectedBooking.bookingStatus ?? '—'}}
+        </span>
+        <div class="bm-stat-key mt-1">Status</div>
+      </div>
+      <div class="bm-stat">
+        <span [class]="getPaymentClass(selectedBooking.paymentStatus)">
+          {{selectedBooking.paymentStatus ?? '—'}}
+        </span>
+        <div class="bm-stat-key mt-1">Payment</div>
+      </div>
+    </div>
+
+    <div class="bm-section">
+      <div class="bm-section-label">Payment Breakdown</div>
+      <div class="bm-payment-row">
+        <span>Total Amount</span>
+        <span>EGP {{selectedBooking.finalPriceAmount | number}}</span>
+      </div>
+      <div class="bm-payment-row">
+        <span>Divers</span>
+        <span>× {{selectedBooking.diversCount}}</span>
+      </div>
+      <div class="bm-payment-row bm-payment-total">
+        <span>Per Diver</span>
+        <span>EGP {{(selectedBooking.finalPriceAmount / selectedBooking.diversCount) | number}}</span>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap"
+      *ngIf="selectedBooking.bookingStatus === 'Pending' || selectedBooking.bookingStatus === 'Confirmed'">
+      <button *ngIf="selectedBooking.bookingStatus === 'Pending'"
+        (click)="confirmBooking(selectedBooking.id)"
+        [disabled]="actionLoading === selectedBooking.id"
+        class="btn-primary-gradient d-flex align-items-center gap-2 px-4 py-2">
+        <span class="material-symbols-outlined" style="font-size:1rem;">check_circle</span>
+        {{actionLoading === selectedBooking.id ? 'Processing…' : 'Confirm Booking'}}
+      </button>
+      <button (click)="openCancelModal(selectedBooking.id)"
+        [disabled]="actionLoading === selectedBooking.id"
+        class="bm-cancel-btn d-flex align-items-center gap-2 px-4 py-2">
+        <span class="material-symbols-outlined" style="font-size:1rem;">cancel</span>
+        Cancel Booking
+      </button>
+    </div>
+
+  </div>
+
+
+  <!-- ══ CANCEL MODAL ══ -->
+  <div class="modal-backdrop-custom" *ngIf="showCancelModal" (click)="closeCancelModal()"></div>
+  <div class="cancel-modal animate-fadeInUp" *ngIf="showCancelModal">
+    <div class="bm-header mb-3">
+      <h5 class="bm-title mb-0">Cancel Booking</h5>
+      <button class="bm-close" (click)="closeCancelModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <p style="color:var(--on-surface-variant);font-size:.9rem;">
+      Provide a reason for cancellation (optional).
+    </p>
+    <textarea [(ngModel)]="cancelReason" rows="3"
+      placeholder="e.g. Weather conditions, customer request…"
+      class="form-control-tonal w-100 mb-4"
+      style="resize:vertical;"></textarea>
+    <div class="d-flex gap-3">
+      <button (click)="closeCancelModal()"
+        class="btn-secondary-tonal flex-fill py-2">
+        Keep Booking
+      </button>
+      <button (click)="submitCancel()"
+        [disabled]="actionLoading !== null"
+        class="bm-cancel-btn flex-fill py-2 d-flex align-items-center justify-content-center gap-2">
+        <span class="material-symbols-outlined" style="font-size:1rem;">cancel</span>
+        {{actionLoading ? 'Cancelling…' : 'Confirm Cancel'}}
+      </button>
+    </div>
+  </div>
+
+</div>

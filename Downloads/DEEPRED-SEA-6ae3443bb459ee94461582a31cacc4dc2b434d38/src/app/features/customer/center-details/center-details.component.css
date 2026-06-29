@@ -1,0 +1,66 @@
+
+/* ── Hero ── */
+.detail-hero       { height: 420px; overflow: hidden; }
+.detail-hero-img   { width:100%; height:100%; object-fit:cover; }
+.detail-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,29,50,.85) 0%,rgba(0,29,50,.3) 60%,transparent 100%); }
+
+.verified-pill { background:rgba(0,103,125,.85); backdrop-filter:blur(8px); color:#fff; font-size:.75rem; font-weight:700; }
+.verified-pill-icon { font-size:.9rem; font-variation-settings:'FILL' 1; }
+
+.tag-pill { background:rgba(255,255,255,.15); backdrop-filter:blur(8px); color:#fff; font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:9999px; }
+
+.hero-center-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:2.25rem; font-weight:800; color:#fff; margin-bottom:.5rem; }
+.hero-location    { color:rgba(255,255,255,.9); font-size:.9rem; }
+.hero-loc-icon    { font-size:1rem; color:#50d9fe; }
+.hero-rating-star { font-size:1rem; color:#f59e0b; font-variation-settings:'FILL' 1; }
+.hero-rating-val  { color:#fff; font-weight:700; }
+.hero-rating-count{ color:rgba(255,255,255,.7); font-size:.85rem; }
+
+.wa-btn   { background:#25d366; color:#fff; font-size:.875rem; }
+.wa-icon  { font-size:1.1rem; }
+.book-icon{ font-size:1.1rem; }
+
+/* ── Tabs ── */
+.tab-bar       { background:var(--surface-container-low); }
+.tab-btn-active  { background:#fff; color:var(--primary); font-weight:700; box-shadow:0 2px 8px rgba(0,29,50,.1); }
+.tab-btn-inactive{ background:transparent; color:var(--on-surface-variant); font-weight:500; }
+.tab-btn { font-size:.875rem; cursor:pointer; transition:all .25s; text-transform:capitalize; }
+
+/* ── Overview tab ── */
+.overview-title { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1rem; }
+.overview-text  { color:var(--on-surface-variant); line-height:1.8; }
+.stat-box       { background:var(--surface-container-low); border-radius:1rem; }
+.stat-box-value { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.5rem; font-weight:800; color:var(--primary); }
+.stat-box-label { font-size:.78rem; color:var(--on-surface-variant); }
+
+/* ── Trips tab ── */
+.trips-title { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin-bottom:1.5rem; }
+.trip-name   { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; color:var(--on-surface); margin:0; }
+.trip-meta   { color:var(--on-surface-variant); font-size:.82rem; }
+.trip-meta-icon { font-size:.9rem; }
+.trip-price  { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.25rem; font-weight:800; color:var(--primary); }
+.trip-per    { font-size:.7rem; color:var(--outline); }
+
+/* ── Gallery tab ── */
+.gallery-img { width:100%; height:200px; object-fit:cover; border-radius:1rem; transition:transform .3s; }
+.gallery-img:hover { transform:scale(1.03); }
+
+/* ── Reviews tab ── */
+.review-avatar { width:40px; height:40px; background:linear-gradient(135deg,#005d90,#50d9fe); color:#fff; flex-shrink:0; }
+.reviewer-name { font-weight:700; color:var(--on-surface); }
+.reviewer-date { font-size:.8rem; color:var(--on-surface-variant); }
+.review-star   { font-size:.9rem; color:#f59e0b; font-variation-settings:'FILL' 1; }
+.review-text   { color:var(--on-surface-variant); margin:0; line-height:1.6; }
+
+/* ── Sidebar ── */
+.detail-sidebar  { position:sticky; top:100px; }
+.price-from-label{ font-family:'Plus Jakarta Sans',sans-serif; font-size:1rem; font-weight:700; color:var(--on-surface); margin-bottom:.25rem; }
+.price-from-val  { font-family:'Plus Jakarta Sans',sans-serif; font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:1.5rem; }
+.price-per-suffix{ font-size:1rem; color:var(--outline); font-weight:400; }
+
+.sidebar-wa-btn  { background:#25d366; color:#fff; font-family:'Plus Jakarta Sans',sans-serif; }
+.sidebar-contact-item { font-size:.85rem; color:var(--on-surface-variant); }
+.sidebar-contact-icon { font-size:1rem; color:var(--primary); }
+.sidebar-secure-box   { background:rgba(0,103,125,.06); }
+.sidebar-secure-icon  { color:var(--secondary); font-size:1rem; }
+.sidebar-secure-text  { font-size:.78rem; color:var(--on-surface-variant); }
